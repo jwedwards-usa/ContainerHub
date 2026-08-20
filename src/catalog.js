@@ -2,6 +2,14 @@ const INCH_MM = 25.4;
 const LB_G = 453.59237;
 const GAL_ML = 3785.411784;
 
+export function expandCatalogShard(data) {
+  if (Array.isArray(data?.records)) return data.records;
+  return (data?.groups || []).flatMap(group => {
+    const defaults=group?.defaults || {};
+    return (group?.records || []).map(record=>({...defaults,...record}));
+  });
+}
+
 export function orientations(d, allowTipping = false) {
   if (!d || !['length','width','height'].every(k => Number.isFinite(d[k]) && d[k] > 0)) return [];
   const values = [d.length, d.width, d.height];
