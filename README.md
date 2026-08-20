@@ -14,7 +14,7 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 - Compare external dimensions, internal dimensions when published, capacity and empty weight when published.
 - Open the source specification, preview the primary purchase page, or follow additional retailer offers for the same product identity.
 
-The catalog currently contains **257 verified product records across 37 shards**, plus **9 additional retailer/pack offers**. It preserves the coordinated Sterilite, IRIS, Akro-Mils, Rubbermaid, Cambro, Quantum, Uline, Really Useful Box and Buckhorn families while adding reconciled breadth from The Container Store, Ace Hardware, Lowe's, Target, Home Depot, Tom Thumb and Safeway.
+The catalog currently contains **262 verified product records across 38 shards**, plus **11 additional retailer/pack offers**. It preserves the coordinated Sterilite, IRIS, Akro-Mils, Rubbermaid, Cambro, Quantum, Uline, Really Useful Box and Buckhorn families while adding reconciled breadth from The Container Store, Ace Hardware, Lowe's, Target, Home Depot, Tom Thumb and Safeway.
 
 Retailer enumeration is tracked in `research/retailer-coverage.json`; no retailer is marked exhaustive until every in-scope sellable SKU or variant has an explicit outcome.
 
