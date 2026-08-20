@@ -3,13 +3,15 @@
 Last updated: 2026-08-20
 
 ## Current state
-ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The catalog now contains 94 source-backed products across 13 shards.
+ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The catalog now contains 110 source-backed products across 15 shards.
 
-The current catalog combines the original 15-record manufacturer seed, the 11-record retailer expansion, the 14-record Sterilite breadth wave, a 24-record food-service/industrial/direct-buy wave, and a 30-record retailer/manufacturer expansion completed in five source-specific batches.
+The current catalog combines the original 15-record manufacturer seed, the 11-record retailer expansion, the 14-record Sterilite breadth wave, a 24-record food-service/industrial/direct-buy wave, a 30-record retailer/manufacturer expansion completed in five source-specific batches, and a 16-record Buckhorn straight-wall industrial tote wave.
 
 The 24-record concurrent wave adds eight Cambro polyethylene food boxes, five Quantum Storage Systems QUS stack-and-hang bins, eight Uline stackable bins, and three Really Useful Box latching storage boxes. The 30-record wave adds five IRIS USA WeatherPro/file-storage SKUs; seven Home Depot/Lowe's/Target/Walmart SKUs; seven additional Target Brightroom latching-bin sizes from 5.8–110 qt; six additional Home Depot HDX totes from 7–55 gal; and five Michaels Simply Tidy bins, cases, and an open crate.
 
-The retailer coverage includes The Container Store, Target, Walmart, Ace Hardware, The Home Depot, Lowe's, H-E-B, Hobby Lobby, Michaels, Brookshire's, IRIS USA, Uline, and Really Useful Box, with manufacturer/direct-source families from Sterilite, Cambro, Quantum Storage Systems, Akro-Mils, and Rubbermaid Commercial. Tom Thumb and Safeway were researched but not added because the indexed listings did not expose SKU-level external dimensions required for shelf fit.
+The 16-record Buckhorn wave adds the current straight-wall family from SW12070502 through SW48150802, using current sellable distributor listings with Buckhorn specification cross-checks and explicit notes for source conflicts.
+
+The retailer coverage includes The Container Store, Target, Walmart, Ace Hardware, The Home Depot, Lowe's, H-E-B, Hobby Lobby, Michaels, Brookshire's, IRIS USA, Uline, and Really Useful Box, with manufacturer/direct-source families from Sterilite, Cambro, Quantum Storage Systems, Akro-Mils, Rubbermaid Commercial, and Buckhorn. Tom Thumb and Safeway were researched but not added because the indexed listings did not expose SKU-level external dimensions required for shelf fit.
 
 The UI supports:
 - free-text search across product identity and taxonomy fields;
@@ -21,7 +23,7 @@ The UI supports:
 - source links and purchase links, including an iframe preview dialog with a new-tab fallback;
 - lightweight SVG dimensional thumbnails.
 
-`data/catalog.json` lists 13 catalog shards. All shards use `data/schema.json`. Unknown product facts are `null`, not estimates. Source notes preserve qualifiers such as bottom-interior dimensions, pack-level SKUs, water-resistance claims, and retailer-specific product identifiers.
+`data/catalog.json` lists 15 catalog shards. All shards use `data/schema.json`. Unknown product facts are `null`, not estimates. Source notes preserve qualifiers such as bottom-interior dimensions, pack-level SKUs, water-resistance claims, and retailer-specific product identifiers.
 
 ## Verification
 Run from the repository root:
@@ -32,7 +34,7 @@ node --check app.js
 git diff --check
 ```
 
-The expected catalog validator result is 94 records / 94 unique IDs across 13 shards. During this coordination pass, connected GitHub comparisons were used to detect concurrent branch movement and verify that merge trees retained both workers' shard sets rather than replacing one manifest with another. The current VM cannot resolve `github.com`, so publication and branch verification use the connected GitHub API; rerun the local validator/browser commands from a checkout when network-independent checkout access is available.
+The expected catalog validator result is 110 records / 110 unique IDs across 15 shards. During this coordination pass, connected GitHub comparisons were used to detect concurrent branch movement and verify that merge trees retained both workers' shard sets rather than replacing one manifest with another. The current VM cannot resolve `github.com`, so publication and branch verification use the connected GitHub API; rerun the local validator/browser commands from a checkout when network-independent checkout access is available.
 
 ## Browser testing lesson
 The VM has `/usr/bin/chromium`, but environment policy can block normal localhost navigation even when a local server is healthy. Do not weaken browser security to get around this. `tests/browser_test.py` creates one self-contained HTML document, injects the checked-in CSS and JavaScript, and replaces `fetch()` with all catalog manifest/shard data. It then exercises the real DOM with Chromium through Playwright.
@@ -64,7 +66,7 @@ Tom Thumb and Safeway remain unresolved. Their searchable listings lacked physic
 ## Next useful implementation work
 1. Resolve Tom Thumb and Safeway with exact SKU-to-dimension matches.
 2. Continue exhaustive mining of remaining SKUs at completed retailers, especially Target, Walmart, Lowe's, Home Depot, Michaels, Hobby Lobby, Container Store, and Ace.
-3. Mine Buckhorn product families with stable manufacturer identifiers and external dimensions.
+3. Expand Buckhorn beyond the straight-wall family into attached-lid and bulk containers.
 4. Expand Cambro into Camwear/CamSquares and additional food-storage families.
 5. Expand Quantum QUS and related industrial-bin sizes beyond the first verified SKUs.
 6. Expand Uline into additional house-brand bin, tote, crate, and liquid-capable families.
