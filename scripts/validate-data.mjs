@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {expandShardRecords} from '../src/shards.js';
 
 const root=new URL('../',import.meta.url);
 const manifest=JSON.parse(fs.readFileSync(new URL('../data/catalog.json',import.meta.url),'utf8'));
@@ -18,11 +19,12 @@ let recordCount=0;
 for(const {name,data} of datasets){
   if(data.schema_version!==1) errors.push(`${name}: schema_version must be 1`);
   if(!Array.isArray(data.records)) {errors.push(`${name}: records must be an array`); continue}
-  recordCount+=data.records.length;
-  for(const [i,r] of data.records.entries()){
+  const records=expandShardRecords(data);
+  recordCount+=records.length;
+  for(const [i,r] of records.entries()){
     const p=`${name}.records[${i}]`;
     for(const key of ['id','brand','name','model','category','source_site','source_url','purchase_site','purchase_url','verified_at','material','translucency','colors','shape','handles','closure','wall_style','liquid_capable','stackable','nestable','wheels','external_mm','internal_mm','capacity_ml','max_load_g','empty_weight_g','notes','image']) {
-      if(!(key in r)) errors.push(`${p}.${key} is required`);
+      if(!(key in r)) errors.push(`${p}.${key} is required after shard defaults are applied`);
     }
     if(ids.has(r.id)) errors.push(`${p}.id duplicate ${r.id}`); ids.add(r.id);
     const identity=`${String(r.brand).toLowerCase()}|${String(r.model).toLowerCase()}`;
