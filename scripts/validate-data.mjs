@@ -10,7 +10,7 @@ if(!Array.isArray(manifest.shards)||!manifest.shards.length) errors.push('catalo
 const datasets=(manifest.shards||[]).map(name=>({name,data:JSON.parse(fs.readFileSync(new URL(`../data/${name}`,import.meta.url),'utf8'))}));
 const compactNulls={model:null,material:null,translucency:null,colors:null,shape:null,handles:null,closure:null,wall_style:null,liquid_capable:null,stackable:null,nestable:null,wheels:null,external_mm:null,internal_mm:null,capacity_ml:null,max_load_g:null,empty_weight_g:null,notes:[]};
 const required=['id','brand','name','model','category','source_site','source_url','purchase_site','purchase_url','verified_at','material','translucency','colors','shape','handles','closure','wall_style','liquid_capable','stackable','nestable','wheels','external_mm','internal_mm','capacity_ml','max_load_g','empty_weight_g','notes','image'];
-const ids=new Set(), identities=new Set(), sourceUrls=new Set();
+const ids=new Set(), identities=new Set(), unmodeledUrls=new Set();
 let recordCount=0;
 
 function humanizeHandle(handle){
@@ -47,8 +47,15 @@ for(const {name,data} of datasets){
     const p=`${name}.records[${i}]`;
     for(const key of required) if(!(key in r)) errors.push(`${p}.${key} is required`);
     if(ids.has(r.id)) errors.push(`${p}.id duplicate ${r.id}`); ids.add(r.id);
-    if(r.model!=null){const identity=`${String(r.brand).toLowerCase()}|${String(r.model).toLowerCase()}`;if(identities.has(identity)) errors.push(`${p} duplicate brand/model ${r.brand} ${r.model}`);identities.add(identity)}
-    if(sourceUrls.has(r.source_url)) errors.push(`${p}.source_url duplicate ${r.source_url}`); sourceUrls.add(r.source_url);
+    if(r.model!=null){
+      const identity=`${String(r.brand).toLowerCase()}|${String(r.model).toLowerCase()}`;
+      if(identities.has(identity)) errors.push(`${p} duplicate brand/model ${r.brand} ${r.model}`);
+      identities.add(identity);
+    } else {
+      const identity=`${String(r.brand).toLowerCase()}|${r.source_url}`;
+      if(unmodeledUrls.has(identity)) errors.push(`${p} duplicate unmodeled source ${r.brand} ${r.source_url}`);
+      unmodeledUrls.add(identity);
+    }
     for(const key of ['source_url','purchase_url']){try{const u=new URL(r[key]);if(u.protocol!=='https:') errors.push(`${p}.${key} must be https`)}catch{errors.push(`${p}.${key} invalid URL`)}}
     if(r.external_mm!=null) for(const key of ['length','width','height']) if(!(r.external_mm?.[key]>0)) errors.push(`${p}.external_mm.${key} must be > 0`);
     if(r.internal_mm!=null) for(const key of ['length','width','height']){if(!(r.internal_mm?.[key]>0)) errors.push(`${p}.internal_mm.${key} must be > 0`);if(r.external_mm&&r.internal_mm[key]>r.external_mm[key]) errors.push(`${p}.internal_mm.${key} exceeds external dimension`)}
