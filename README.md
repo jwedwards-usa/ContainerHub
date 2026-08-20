@@ -14,7 +14,7 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 - Compare external dimensions, internal dimensions, capacity and empty weight when published.
 - Open source specifications, primary purchase pages, and additional retailer offers.
 
-The catalog currently contains **303 verified product records across 43 shards**, plus **11 additional retailer/pack offers**. It preserves the coordinated Sterilite, IRIS, Akro-Mils, Rubbermaid, Cambro, Quantum, Uline, Really Useful Box and Buckhorn families, including all 13 current Uline Clear Plastic Shelf Bin sizes, all seven standard Cambro FreshPro CamRounds, 12 Akro-Grid dividable storage boxes, and all nine current Akro-Mils Nest & Stack Tote models.
+The catalog currently contains **305 verified product records across 44 shards**, plus **12 additional retailer/pack/configuration offers**. It preserves the coordinated Sterilite, IRIS, Akro-Mils, Rubbermaid, Cambro, Quantum, Uline, Really Useful Box and Buckhorn families, including all 13 current Uline Clear Plastic Shelf Bin sizes, all seven standard Cambro FreshPro CamRounds, 12 Akro-Grid dividable storage boxes, all nine current Akro-Mils Nest & Stack Tote models, and both current KeepBox physical sizes.
 
 Retailer enumeration is tracked in `research/retailer-coverage.json`; no retailer is marked exhaustive until every in-scope sellable SKU or variant has an explicit outcome.
 
@@ -33,6 +33,6 @@ python3 tests/browser_test.py
 `npm run check` validates catalog invariants and retailer offers, then runs the fit/search unit tests. The Playwright smoke test uses an in-memory bundle so it also runs in network-restricted environments.
 
 ## Data
-`data/catalog.json` is the manifest; each listed JSON file is a product shard using `data/schema.json`. Additional sellers for an existing product live in `data/offers.json` rather than duplicate product records. Measurements are canonicalized to millimeters, milliliters and grams. Unknown values are `null`, never estimates. See `AGENTS.md` for research rules.
+`data/catalog.json` is the manifest; each listed JSON file is a product shard using `data/schema.json`. Additional sellers and sellable configurations sharing an existing physical product live in `data/offers.json` rather than duplicate product records. Measurements are canonicalized to millimeters, milliliters and grams. Unknown values are `null`, never estimates. See `AGENTS.md` for research rules.
 
 Generated SVG thumbnails are dimensional schematics rather than product photography and keep the catalog usable on low-bandwidth connections.
