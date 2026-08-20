@@ -3,9 +3,9 @@
 Last updated: 2026-08-20
 
 ## Current state
-ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The catalog now contains 139 source-backed products across 19 shards.
+ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The catalog now contains 147 source-backed products across 20 shards.
 
-The current catalog combines the original 15-record manufacturer seed, the 11-record retailer expansion, the 14-record Sterilite breadth wave, a 24-record food-service/industrial/direct-buy wave, a 30-record retailer/manufacturer expansion completed in five source-specific batches, a 16-record Buckhorn straight-wall industrial tote wave, a 21-record Cambro CamSquares Classic wave, and an 8-record Cambro Camwear CamRounds wave.
+The current catalog combines the original 15-record manufacturer seed, the 11-record retailer expansion, the 14-record Sterilite breadth wave, a 24-record food-service/industrial/direct-buy wave, a 30-record retailer/manufacturer expansion completed in five source-specific batches, a 16-record Buckhorn straight-wall industrial tote wave, a 21-record Cambro CamSquares Classic wave, and a 16-record Cambro Classic CamRounds wave.
 
 The 24-record concurrent wave adds eight Cambro polyethylene food boxes, five Quantum Storage Systems QUS stack-and-hang bins, eight Uline stackable bins, and three Really Useful Box latching storage boxes. The 30-record wave adds five IRIS USA WeatherPro/file-storage SKUs; seven Home Depot/Lowe's/Target/Walmart SKUs; seven additional Target Brightroom latching-bin sizes from 5.8–110 qt; six additional Home Depot HDX totes from 7–55 gal; and five Michaels Simply Tidy bins, cases, and an open crate.
 
@@ -13,7 +13,7 @@ The 16-record Buckhorn wave adds the current straight-wall family from SW1207050
 
 The 21-record CamSquares Classic wave adds seven polyethylene, seven translucent polypropylene, and seven clear Camwear polycarbonate square food-storage containers spanning 2–22 qt. Dimensions come from current Cambro specifications, and each record links to a model-matched KaTom purchase page. Cambro publishes the current exterior dimensions with covers installed even though lids are sold separately; that qualifier is retained in every record.
 
-The 8-record CamRounds wave adds the full clear Camwear polycarbonate round family from 1–22 qt. Current Cambro specifications supply capacity, diameter, and height; current model-matched KaTom listings provide direct purchase links and cross-check material, dimensions, handles, and stackability. Round diameters are represented as both length and width for shelf-fit calculations, and the published height-with-cover qualifier is retained because covers are sold separately.
+The 16-record CamRounds wave adds the full 1–22 qt size range in both clear Camwear polycarbonate and translucent polypropylene. Current Cambro specifications supply capacity, diameter, and height; current model-matched KaTom listings provide direct purchase links and cross-check material and dimensions. Round diameters are represented as both length and width for shelf-fit calculations, and the published height-with-cover qualifier is retained because covers are sold separately.
 
 The retailer coverage includes The Container Store, Target, Walmart, Ace Hardware, The Home Depot, Lowe's, H-E-B, Hobby Lobby, Michaels, Brookshire's, IRIS USA, Uline, Really Useful Box, KaTom Restaurant Supply, and WebstaurantStore, with manufacturer/direct-source families from Sterilite, Cambro, Quantum Storage Systems, Akro-Mils, Rubbermaid Commercial, and Buckhorn. Tom Thumb and Safeway were researched but not added because the indexed listings did not expose SKU-level external dimensions required for shelf fit.
 
@@ -27,7 +27,7 @@ The UI supports:
 - source links and purchase links, including an iframe preview dialog with a new-tab fallback;
 - lightweight SVG dimensional thumbnails.
 
-`data/catalog.json` lists 19 catalog shards. All shards use `data/schema.json`. Unknown product facts are `null`, not estimates. Source notes preserve qualifiers such as bottom-interior dimensions, dimensions published with accessory covers, pack-level SKUs, water-resistance claims, and retailer-specific product identifiers.
+`data/catalog.json` lists 20 catalog shards. All shards use `data/schema.json`. Unknown product facts are `null`, not estimates. Source notes preserve qualifiers such as bottom-interior dimensions, dimensions published with accessory covers, pack-level SKUs, water-resistance claims, and retailer-specific product identifiers.
 
 ## Verification
 Run from the repository root:
@@ -38,7 +38,7 @@ node --check app.js
 git diff --check
 ```
 
-The expected catalog validator result is 139 records / 139 unique IDs across 19 shards. During coordination passes, connected GitHub comparisons are used immediately before publication to detect concurrent branch movement and avoid replacing another worker's manifest. The current VM cannot reliably reach `github.com`, so publication and branch verification use the connected GitHub API; rerun the local validator/browser commands from a checkout when network-independent checkout access is available.
+The expected catalog validator result is 147 records / 147 unique IDs across 20 shards. During coordination passes, connected GitHub comparisons are used immediately before publication to detect concurrent branch movement and avoid replacing another worker's manifest. The current VM cannot reliably reach `github.com`, so publication and branch verification use the connected GitHub API; rerun the local validator/browser commands from a checkout when network-independent checkout access is available.
 
 ## Browser testing lesson
 The VM has `/usr/bin/chromium`, but environment policy can block normal localhost navigation even when a local server is healthy. Do not weaken browser security to get around this. `tests/browser_test.py` creates one self-contained HTML document, injects the checked-in CSS and JavaScript, and replaces `fetch()` with all catalog manifest/shard data. It then exercises the real DOM with Chromium through Playwright.
@@ -49,7 +49,7 @@ There are no GitHub Actions credits available for this project, and deployment m
 Preferred publication shape:
 - `main`: source-of-truth repository contents;
 - `gh-pages`: ready-to-serve static tree;
-- while no build step exists, both branches can point to the same verified commit;
+- while no build step exists, the served tree should match `main` even if `gh-pages` retains separate publication merge history;
 - if a build step is introduced later, run it on the VM and commit/push only the built site to `gh-pages`.
 
 The VM may not be able to resolve or reach `github.com` for a normal `git push`. The connected GitHub API can create commits/refs without Actions and should be used as the fallback publication path.
@@ -73,7 +73,7 @@ Tom Thumb and Safeway remain unresolved. Their searchable listings lacked physic
 1. Resolve Tom Thumb and Safeway with exact SKU-to-dimension matches.
 2. Continue exhaustive mining of remaining SKUs at completed retailers, especially Target, Walmart, Lowe's, Home Depot, Michaels, Hobby Lobby, Container Store, and Ace.
 3. Expand Buckhorn beyond the straight-wall family into attached-lid and bulk containers.
-4. Expand Cambro into translucent CamRounds, FreshPro CamRounds/CamSquares, and additional food-storage families.
+4. Expand Cambro into Classic Poly CamRounds, FreshPro CamRounds/CamSquares, and additional food-storage families.
 5. Expand Quantum QUS and related industrial-bin sizes beyond the first verified SKUs.
 6. Expand Uline into additional house-brand bin, tote, crate, and liquid-capable families.
 7. Add direct retailer purchase joins for manufacturer-only records where exact model matching is available.
