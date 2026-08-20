@@ -11,6 +11,7 @@ const els = {
   previewPurchase:$('previewPurchase'), previewSellers:$('previewSellers'), previewSource:$('previewSource')
 };
 const storage={get(key){try{return localStorage.getItem(key)}catch{return null}},set(key,value){try{localStorage.setItem(key,value)}catch{}}};
+const compactNulls={model:null,material:null,translucency:null,colors:null,shape:null,handles:null,closure:null,wall_style:null,liquid_capable:null,stackable:null,nestable:null,wheels:null,external_mm:null,internal_mm:null,capacity_ml:null,max_load_g:null,empty_weight_g:null,notes:[]};
 let unit = storage.get('containerhub-unit') || 'imperial';
 let records = [];
 let currentPreview = null;
@@ -182,12 +183,18 @@ async function fetchJson(path) {
   return response.json();
 }
 
+function expandDataset(dataset) {
+  if (!dataset.compact) return dataset.records;
+  const defaults={...compactNulls,...(dataset.defaults||{})};
+  return dataset.records.map(record=>({...defaults,...record,notes:[...(defaults.notes||[]),...(record.notes||[])]}));
+}
+
 async function loadCatalog() {
   const manifest=await fetchJson('./data/catalog.json');
   const catalogPromise=Promise.all(manifest.shards.map(name=>fetchJson(`./data/${name}`)));
   const offersPromise=manifest.offers ? fetchJson(`./data/${manifest.offers}`) : Promise.resolve({offers:[]});
   const [catalogs,offerData]=await Promise.all([catalogPromise,offersPromise]);
-  const loaded=catalogs.flatMap(catalog=>catalog.records);
+  const loaded=catalogs.flatMap(expandDataset);
   const byProduct=new Map();
   for(const offer of offerData.offers || []) {
     const list=byProduct.get(offer.product_id) || [];
