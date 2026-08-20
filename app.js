@@ -1,4 +1,5 @@
 import {capacityLabel, lengthLabel, searchRecords, toMm, weightLabel} from './src/catalog.js';
+import {expandShardRecords} from './src/shards.js';
 
 const $ = id => document.getElementById(id);
 const els = {
@@ -183,7 +184,7 @@ async function loadCatalog() {
   const catalogPromise=Promise.all(manifest.shards.map(name=>fetchJson(`./data/${name}`)));
   const offersPromise=manifest.offers ? fetchJson(`./data/${manifest.offers}`) : Promise.resolve({offers:[]});
   const [catalogs,offerData]=await Promise.all([catalogPromise,offersPromise]);
-  const loaded=catalogs.flatMap(catalog=>catalog.records);
+  const loaded=catalogs.flatMap(expandShardRecords);
   const byProduct=new Map();
   for(const offer of offerData.offers || []) {
     const list=byProduct.get(offer.product_id) || [];
