@@ -2,23 +2,25 @@
 
 Final integration target: 294 product records, 42 product shards, 11 retailer/pack offers.
 
-## Coordinated base
+## Coordinated state
 
-The prior all-worker reconciliation reached 275 products across 39 shards plus 11 offers. It preserved the manufacturer/industrial catalog, retailer reconciliation, five recovered Really Useful Box sizes, duplicate seller listings as offers, and the recovered Uline Clear Plastic Shelf Bin family.
+The coordinated tree contains the manufacturer/industrial waves, retailer reconciliation, five recovered Really Useful Box sizes, 13 Uline Clear Plastic Shelf Bins, seven standard Cambro FreshPro CamRounds and 12 Akro-Grid dividable boxes.
 
 ## Recovered and newly merged work
 
 `catalog/really-useful-box-wave` contributed five non-duplicate physical sizes: 6.5 L, 19 L, 32 L, 42 L and 64 L. Its 9 L and 17 L Staples listings are offers on existing normalized products.
 
-`agent/uline-clear-shelf-bins-20260820` had a prepared 13-SKU Uline Clear Plastic Shelf Bin tree when an earlier session was interrupted. That tree was subsequently committed and merged; no matching shelf-bin IDs existed in the coordinated catalog.
+`agent/uline-clear-shelf-bins-20260820` contributed all 13 current Uline Clear Plastic Shelf Bin SKUs.
 
-`catalog/cambro-freshpro-camrounds-20260820` adds seven current standard FreshPro CamRounds from 2–22 qt. Its source-family commit was merged with explicit parent ancestry after rebuilding the manifest on the latest main.
+`catalog/cambro-freshpro-camrounds-20260820` contributed all seven current standard FreshPro CamRounds from 2–22 qt.
 
-`catalog/akro-grid-20260820` appeared after the previous final audit with 12 unique Akro-Grid dividable box records split across two shards. The two product shards and family thumbnail are merged here; its stale manifest is not used.
+`catalog/akro-grid-20260820` contributed 12 Akro-Grid dividable storage boxes across two shards.
 
-## Superseded/content-covered branches
+## Branch ancestry
 
-Useful content from the following branches is present in current `main` or stronger reconciled shards. Stale manifests must not replace the coordinated tree:
+Historical branches whose useful files had previously been reconciled without preserving branch ancestry were subsequently merged as additional parents while retaining the stronger coordinated tree byte-for-byte. The same rule is used for late worker branches: preserve their branch heads as ancestry without allowing stale manifests or duplicate product identities to replace current data.
+
+The audited historical set includes:
 
 - `agent/catalog-wave-2-20260820`
 - `agent/catalog-wave-3-20260820`
@@ -31,6 +33,7 @@ Useful content from the following branches is present in current `main` or stron
 - `catalog/cambro-camsquares-pp-20260820`
 - `catalog/cambro-camsquares-wave`
 - `catalog/cambro-freshpro-20260820`
+- `catalog/cambro-freshpro-camrounds-20260820`
 - `catalog/cambro-poly-camrounds-wave`
 - `catalog/cambro-translucent-camrounds-wave`
 - `catalog/exhaustive-retailer-wave`
@@ -47,11 +50,9 @@ Useful content from the following branches is present in current `main` or stron
 - `catalog/uline-clear-industrial-20260820`
 - `catalog/wave2-20260820`
 
-Some branches are Git-history-diverged because earlier coordination reconciled their files without preserving every branch head as a merge parent. Content coverage is the integration criterion; stale manifests and duplicate physical products are not reintroduced merely to make branch graphs converge.
-
 ## Duplicate handling
 
-Product identity is separate from seller identity. Pack variants and second retailers for the same physical container belong in `data/offers.json`.
+Product identity is separate from seller identity. Pack variants and second retailers for the same physical container belong in `data/offers.json`. Stale manifests are never reintroduced merely to make branch graphs converge.
 
 ## Publication rule
 
