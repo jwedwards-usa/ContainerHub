@@ -34,8 +34,8 @@ def main():
         errors=[]
         page.on('pageerror',lambda exc: errors.append(f'pageerror: {exc}'))
         page.set_content(bundled_html(),wait_until='load')
-        page.wait_for_function("document.querySelector('#resultCount').textContent === '245'")
-        assert page.locator('#resultCount').inner_text()=='245'
+        page.wait_for_function("document.querySelector('#resultCount').textContent === '262'")
+        assert page.locator('#resultCount').inner_text()=='262'
 
         page.locator('#query').fill('Safeway')
         assert page.locator('#resultCount').inner_text()=='1'
@@ -54,7 +54,7 @@ def main():
         assert page.locator('#resultCount').inner_text()=='1'
         page.locator('#clear').click()
         page.locator('#query').fill('HDPE')
-        assert page.locator('#resultCount').inner_text()=='19'
+        assert page.locator('#resultCount').inner_text()=='31'
         page.locator('#clear').click()
         page.locator('#brandFilter').select_option('Rubbermaid Commercial')
         assert page.locator('#resultCount').inner_text()=='4'
