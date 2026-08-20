@@ -1,27 +1,28 @@
 # Worker branch reconciliation — 2026-08-20
 
-Final coordinated state: 294 product records, 42 product shards, 11 retailer/pack offers.
+Final coordinated state: 303 product records, 43 product shards, 11 retailer/pack offers.
 
-## Recovered work
+## Recovered and coordinated work
 
 The reconciliation retains all manufacturer, retailer and industrial waves and recovered late worker work:
 
 - five non-duplicate Really Useful Box sizes from `catalog/really-useful-box-wave`;
 - all 13 Uline Clear Plastic Shelf Bins from `agent/uline-clear-shelf-bins-20260820`;
 - all seven standard Cambro FreshPro CamRounds from `catalog/cambro-freshpro-camrounds-20260820`;
-- all 12 Akro-Grid dividable storage boxes from `catalog/akro-grid-20260820`.
+- all 12 Akro-Grid dividable storage boxes from `catalog/akro-grid-20260820`;
+- all nine current Akro-Mils Nest & Stack Totes from `catalog/akro-nest-stack-20260820`.
 
 Overlapping seller listings remain offers in `data/offers.json` rather than duplicate physical products.
 
 ## Branch ancestry
 
-The final reconciliation also preserves Git ancestry. Historical worker and integration branches whose files had previously been copied or reconciled without their branch heads were merged as additional parents while retaining the stronger coordinated tree byte-for-byte. Stale manifests were never restored.
+The coordinated history preserves worker ancestry. Historical worker and integration branches whose files had previously been copied or reconciled without their branch heads were merged as additional parents while retaining the stronger coordinated tree byte-for-byte. Stale manifests were never restored.
 
-The final audit covers all visible non-publication branches, including the historical catalog waves, retailer reconciliations, 180/188/262/287 integration branches, Akro-Grid integration/checkpoint attempts and metadata audit branches. After the ancestry merges, every audited non-`main`/non-`gh-pages` branch has zero commits ahead of `main`.
+The branch audit covers all visible non-publication branches, including historical catalog waves, retailer reconciliations, integration branches, late industrial-family branches and metadata audit branches. No new worker branch appeared during the Nest & Stack integration pass; previously audited branches remain ancestors of the newer linear `main`, and the new Nest & Stack data/metadata branches are also fully behind `main` after integration.
 
 ## Current families added during final coordination
 
-Akro-Grid covers models 33105, 33162, 33164, 33165, 33166, 33168, 33220, 33222, 33223, 33224, 33226 and 33228. FreshPro CamRounds cover 2, 4, 6, 8, 12, 18 and 22 qt. Uline Clear Plastic Shelf Bins cover all 13 current sizes represented by the worker wave.
+Akro-Grid covers models 33105, 33162, 33164, 33165, 33166, 33168, 33220, 33222, 33223, 33224, 33226 and 33228. FreshPro CamRounds cover 2, 4, 6, 8, 12, 18 and 22 qt. Uline Clear Plastic Shelf Bins cover all 13 current sizes represented by the worker wave. Akro-Mils Nest & Stack coverage now includes 35180, 35185, 35190, 35195, 35200, 35225, 35230, 35240 and 35300.
 
 ## Duplicate handling
 
