@@ -13,6 +13,7 @@ const datasets=(manifest.shards||[]).map(name=>({
 }));
 const ids=new Set();
 const identities=new Set();
+const sourceUrls=new Set();
 let recordCount=0;
 
 for(const {name,data} of datasets){
@@ -25,8 +26,11 @@ for(const {name,data} of datasets){
       if(!(key in r)) errors.push(`${p}.${key} is required`);
     }
     if(ids.has(r.id)) errors.push(`${p}.id duplicate ${r.id}`); ids.add(r.id);
-    const identity=`${String(r.brand).toLowerCase()}|${String(r.model).toLowerCase()}`;
-    if(identities.has(identity)) errors.push(`${p} duplicate brand/model ${r.brand} ${r.model}`); identities.add(identity);
+    if(r.model!=null){
+      const identity=`${String(r.brand).toLowerCase()}|${String(r.model).toLowerCase()}`;
+      if(identities.has(identity)) errors.push(`${p} duplicate brand/model ${r.brand} ${r.model}`); identities.add(identity);
+    }
+    if(sourceUrls.has(r.source_url)) errors.push(`${p}.source_url duplicate ${r.source_url}`); sourceUrls.add(r.source_url);
     for(const key of ['source_url','purchase_url']) {
       try{const u=new URL(r[key]);if(u.protocol!=='https:') errors.push(`${p}.${key} must be https`)}
       catch{errors.push(`${p}.${key} invalid URL`)}
