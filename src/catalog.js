@@ -57,8 +57,8 @@ export function searchRecords(records, filters = {}) {
         .filter(Boolean).join(' ').toLowerCase();
       if (q && !haystack.includes(q)) return false;
       if (brands.size && !brands.has(record.brand)) return false;
-      if (closures.size && ![...closures].some(c => record.closure.includes(c))) return false;
-      if (filters.lidded === true && record.closure.startsWith('open')) return false;
+      if (closures.size && (!record.closure || ![...closures].some(c => record.closure.includes(c)))) return false;
+      if (filters.lidded === true && (!record.closure || record.closure.startsWith('open'))) return false;
       if (filters.transparent === true && record.translucency !== 'transparent') return false;
       if (filters.wheels === true && record.wheels !== true) return false;
       if (fitOnly && (!fit || fit.count < 1)) return false;
