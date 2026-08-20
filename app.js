@@ -5,11 +5,15 @@ const els = {
   query:$('query'), shelfWidth:$('shelfWidth'), shelfDepth:$('shelfDepth'), shelfHeight:$('shelfHeight'),
   fitOnly:$('fitOnly'), allowTipping:$('allowTipping'), brand:$('brandFilter'), lidded:$('lidded'),
   transparent:$('transparent'), wheels:$('wheels'), clear:$('clear'), results:$('results'), resultCount:$('resultCount'),
-  fitHint:$('fitHint'), unitToggle:$('unitToggle'), cardTemplate:$('cardTemplate')
+  fitHint:$('fitHint'), unitToggle:$('unitToggle'), cardTemplate:$('cardTemplate'), dialog:$('previewDialog'),
+  closePreview:$('closePreview'), previewEyebrow:$('previewEyebrow'), previewTitle:$('previewTitle'), previewImage:$('previewImage'),
+  previewChips:$('previewChips'), previewSpecs:$('previewSpecs'), previewFit:$('previewFit'), previewNotes:$('previewNotes'),
+  previewPurchase:$('previewPurchase'), previewSellers:$('previewSellers'), previewSource:$('previewSource')
 };
 const storage={get(key){try{return localStorage.getItem(key)}catch{return null}},set(key,value){try{localStorage.setItem(key,value)}catch{}}};
 let unit = storage.get('containerhub-unit') || 'imperial';
 let records = [];
+let currentPreview = null;
 
 function shelfFromInputs() {
   const raw = {width:Number(els.shelfWidth.value), depth:Number(els.shelfDepth.value), height:Number(els.shelfHeight.value)};
@@ -28,31 +32,24 @@ function addSpec(dl,label,value) {
   dl.append(dt,dd);
 }
 
-function purchaseOptions(r) {
-  const options=[{retailer:r.purchase_site,url:r.purchase_url},...(r.offers||[])];
-  const seen=new Set();
-  return options.filter(option=>{
-    if(!option?.url || seen.has(option.url)) return false;
-    seen.add(option.url);
-    return true;
-  });
-}
-
-function renderCard(item) {
-  const {record:r,fit}=item;
-  const node=els.cardTemplate.content.firstElementChild.cloneNode(true);
-  const img=node.querySelector('.thumb'); img.src=r.image; img.alt=`${r.brand} ${r.name} dimensional schematic`;
-  node.querySelector('.eyebrow').textContent=`${r.brand} · ${r.model}`;
-  node.querySelector('h2').textContent=r.name;
-  const chips=node.querySelector('.chips');
-  [r.category,r.translucency,r.material.split(';')[0]].forEach(text=>{const c=document.createElement('span');c.className='chip';c.textContent=text;chips.append(c)});
-  const dl=node.querySelector('.specs');
+function renderSpecs(dl,r) {
+  dl.replaceChildren();
   addSpec(dl,'External',formatDims(r.external_mm));
   addSpec(dl,'Internal',formatDims(r.internal_mm));
   addSpec(dl,'Capacity',capacityLabel(r.capacity_ml,unit));
   addSpec(dl,'Empty weight',weightLabel(r.empty_weight_g,unit));
   addSpec(dl,'Closure',r.closure);
-  const fitBox=node.querySelector('.fit-result');
+}
+
+function renderChips(container,r) {
+  container.replaceChildren();
+  [r.category,r.translucency,r.material?.split(';')[0]].filter(Boolean).forEach(text=>{
+    const chip=document.createElement('span'); chip.className='chip'; chip.textContent=text; container.append(chip);
+  });
+}
+
+function renderFit(fitBox,r,fit) {
+  fitBox.classList.remove('good','bad');
   if (!r.external_mm) {
     fitBox.textContent='External dimensions unavailable; excluded from fit ranking.';
   } else if (fit) {
@@ -63,23 +60,88 @@ function renderCard(item) {
       fitBox.classList.add('bad'); fitBox.textContent='Does not fit the entered shelf dimensions.';
     }
   } else fitBox.textContent='Enter shelf width, depth and height for fit count.';
-  const notes=node.querySelector('.notes');
-  [...r.notes, `Verified ${r.verified_at} from ${r.source_site}.`].forEach(text=>{const li=document.createElement('li');li.textContent=text;notes.append(li)});
-  node.querySelector('.source-link').href=r.source_url;
-  const options=purchaseOptions(r);
-  const purchase=node.querySelector('.purchase-link');
-  if(options[0]) {
-    purchase.href=options[0].url;
-    purchase.textContent=`Buy at ${options[0].retailer}`;
-  } else purchase.remove();
-  const sellers=node.querySelector('.seller-links');
+}
+
+function renderNotes(container,r) {
+  container.replaceChildren();
+  [...r.notes, `Verified ${r.verified_at} from ${r.source_site}.`].forEach(text=>{
+    const li=document.createElement('li'); li.textContent=text; container.append(li);
+  });
+}
+
+function purchaseOptions(r) {
+  const options=[{retailer:r.purchase_site,url:r.purchase_url},...(r.offers||[])];
+  const seen=new Set();
+  return options.filter(option=>{
+    if(!option?.url || seen.has(option.url)) return false;
+    seen.add(option.url);
+    return true;
+  });
+}
+
+function configurePrimaryPurchase(link,option) {
+  if (!option) {
+    link.hidden=true;
+    link.removeAttribute('href');
+    return;
+  }
+  link.hidden=false;
+  link.href=option.url;
+  link.textContent=`Buy at ${option.retailer}`;
+}
+
+function renderSellerLinks(container,options) {
+  container.replaceChildren();
   options.slice(1).forEach(option=>{
     const a=document.createElement('a');
     a.className='seller-link'; a.href=option.url; a.target='_blank'; a.rel='noopener noreferrer';
     a.textContent=`Buy at ${option.retailer}${option.channel?` via ${option.channel}`:''}`;
-    sellers.append(a);
+    container.append(a);
   });
+}
+
+function renderCard(item) {
+  const {record:r,fit}=item;
+  const node=els.cardTemplate.content.firstElementChild.cloneNode(true);
+  const img=node.querySelector('.thumb'); img.src=r.image; img.alt=`${r.brand} ${r.name} dimensional schematic`;
+  node.querySelector('.eyebrow').textContent=`${r.brand} · ${r.model}`;
+  node.querySelector('h2').textContent=r.name;
+  renderChips(node.querySelector('.chips'),r);
+  renderSpecs(node.querySelector('.specs'),r);
+  renderFit(node.querySelector('.fit-result'),r,fit);
+  renderNotes(node.querySelector('.notes'),r);
+  node.querySelector('.source-link').href=r.source_url;
+  const options=purchaseOptions(r);
+  configurePrimaryPurchase(node.querySelector('.purchase-link'),options[0]);
+  renderSellerLinks(node.querySelector('.seller-links'),options);
+  node.querySelector('.preview-button').addEventListener('click',()=>openPreview(r,fit));
   return node;
+}
+
+function fillPreview(r,fit) {
+  els.previewEyebrow.textContent=`${r.brand} · ${r.model}`;
+  els.previewTitle.textContent=r.name;
+  els.previewImage.src=r.image;
+  els.previewImage.alt=`${r.brand} ${r.name} dimensional schematic`;
+  renderChips(els.previewChips,r);
+  renderSpecs(els.previewSpecs,r);
+  renderFit(els.previewFit,r,fit);
+  renderNotes(els.previewNotes,r);
+  const options=purchaseOptions(r);
+  configurePrimaryPurchase(els.previewPurchase,options[0]);
+  renderSellerLinks(els.previewSellers,options);
+  els.previewSource.href=r.source_url;
+}
+
+function openPreview(r,fit) {
+  currentPreview={record:r,fit};
+  fillPreview(r,fit);
+  els.dialog.showModal();
+}
+
+function closePreview() {
+  currentPreview=null;
+  els.dialog.close();
 }
 
 function render() {
@@ -93,6 +155,7 @@ function render() {
   els.results.replaceChildren();
   if (!items.length) { const empty=document.createElement('div'); empty.className='empty'; empty.textContent='No containers match these filters.'; els.results.append(empty); return; }
   const frag=document.createDocumentFragment(); items.forEach(i=>frag.append(renderCard(i))); els.results.append(frag);
+  if (currentPreview && els.dialog.open) fillPreview(currentPreview.record,currentPreview.fit);
 }
 
 function updateUnitUI() {
@@ -136,6 +199,9 @@ async function init() {
   document.querySelector('.search-panel').addEventListener('input',render);
   document.querySelector('.search-panel').addEventListener('change',render);
   els.unitToggle.addEventListener('click',switchUnit); els.clear.addEventListener('click',clearFilters);
+  els.closePreview.addEventListener('click',closePreview);
+  els.dialog.addEventListener('close',()=>{currentPreview=null});
+  els.dialog.addEventListener('click',event=>{if(event.target===els.dialog) closePreview()});
 }
 
 init().catch(error=>{els.results.innerHTML=`<div class="empty">Could not load catalog: ${error.message}</div>`});
