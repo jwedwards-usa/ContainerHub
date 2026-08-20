@@ -1,7 +1,7 @@
 {
   "version": 1,
   "status": "paused",
-  "cursor": "retailer-wave-1-complete",
+  "cursor": "catalog-wave-2-merged",
   "completed_sources": [
     "Sterilite",
     "IRIS USA",
@@ -16,7 +16,11 @@
     "H-E-B",
     "Hobby Lobby",
     "Michaels",
-    "Brookshire's"
+    "Brookshire's",
+    "Cambro",
+    "Quantum Storage",
+    "Uline",
+    "Really Useful Box"
   ],
   "blocked_sources": [
     "Tom Thumb",
@@ -25,11 +29,10 @@
   "next_sources": [
     "Tom Thumb exact SKU dimensions",
     "Safeway exact SKU dimensions",
-    "Cambro",
-    "Quantum Storage",
     "Buckhorn",
-    "Really Useful Box",
-    "Uline house brands"
+    "Cambro Camwear and CamSquares",
+    "Quantum Storage remaining QUS sizes",
+    "Uline additional house-brand families"
   ],
   "updated_at": "2026-08-20"
 }
