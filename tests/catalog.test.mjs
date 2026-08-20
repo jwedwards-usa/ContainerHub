@@ -10,11 +10,16 @@ test('seed contains a useful cross-brand catalog',()=>{
   assert.deepEqual([...new Set(records.map(r=>r.brand))].sort(),['Akro-Mils','IRIS USA','Rubbermaid Commercial','Sterilite']);
 });
 
-test('grouped shards merge family defaults without mutating records',()=>{
-  const shard={groups:[{defaults:{brand:'Example',closure:'open'},records:[{id:'one',model:'1'},{id:'two',model:'2',closure:'lid'}]}]};
+test('grouped shards merge object and tabular records',()=>{
+  const shard={groups:[
+    {defaults:{brand:'Example',closure:'open'},records:[{id:'one',model:'1'},{id:'two',model:'2',closure:'lid'}]},
+    {defaults:{brand:'Table'},fields:['id','model'],rows:[['three','3'],['four','4']]}
+  ]};
   assert.deepEqual(expandCatalogShard(shard),[
     {brand:'Example',closure:'open',id:'one',model:'1'},
-    {brand:'Example',closure:'lid',id:'two',model:'2'}
+    {brand:'Example',closure:'lid',id:'two',model:'2'},
+    {brand:'Table',id:'three',model:'3'},
+    {brand:'Table',id:'four',model:'4'}
   ]);
 });
 
