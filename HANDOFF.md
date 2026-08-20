@@ -3,13 +3,13 @@
 Last updated: 2026-08-20
 
 ## Current state
-ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The catalog now contains 64 source-backed products: the original 15-record manufacturer seed, an 11-record retailer expansion, a 14-record Sterilite breadth wave, and a 24-record food-service/industrial/direct-buy wave.
+ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The catalog now contains 94 source-backed products across 13 shards.
 
-The retailer expansion covers The Container Store, Target, Walmart, Ace Hardware, The Home Depot, Lowe's, H-E-B, Hobby Lobby, Michaels, Brookshire's, and IRIS USA. Tom Thumb and Safeway were researched but not added because the current indexed listings did not expose SKU-level external dimensions required for shelf fit.
+The current catalog combines the original 15-record manufacturer seed, the 11-record retailer expansion, the 14-record Sterilite breadth wave, a 24-record food-service/industrial/direct-buy wave, and a 30-record retailer/manufacturer expansion completed in five source-specific batches.
 
-The Sterilite breadth wave adds seven clear storage boxes from 6–90 qt plus a storage crate, three open bins, two dishpans, and a dual-spout utility pail. Unsupported interior dimensions, weights, and load ratings remain null rather than inferred.
+The 24-record concurrent wave adds eight Cambro polyethylene food boxes, five Quantum Storage Systems QUS stack-and-hang bins, eight Uline stackable bins, and three Really Useful Box latching storage boxes. The 30-record wave adds five IRIS USA WeatherPro/file-storage SKUs; seven Home Depot/Lowe's/Target/Walmart SKUs; seven additional Target Brightroom latching-bin sizes from 5.8–110 qt; six additional Home Depot HDX totes from 7–55 gal; and five Michaels Simply Tidy bins, cases, and an open crate.
 
-The newest wave adds eight Cambro polyethylene food boxes, five Quantum Storage Systems QUS stack-and-hang bins, eight Uline stackable bins, and three Really Useful Box latching storage boxes. Source-family changes were committed separately before a two-parent merge preserved concurrent Sterilite work.
+The retailer coverage includes The Container Store, Target, Walmart, Ace Hardware, The Home Depot, Lowe's, H-E-B, Hobby Lobby, Michaels, Brookshire's, IRIS USA, Uline, and Really Useful Box, with manufacturer/direct-source families from Sterilite, Cambro, Quantum Storage Systems, Akro-Mils, and Rubbermaid Commercial. Tom Thumb and Safeway were researched but not added because the indexed listings did not expose SKU-level external dimensions required for shelf fit.
 
 The UI supports:
 - free-text search across product identity and taxonomy fields;
@@ -21,9 +21,9 @@ The UI supports:
 - source links and purchase links, including an iframe preview dialog with a new-tab fallback;
 - lightweight SVG dimensional thumbnails.
 
-`data/catalog.json` lists eight catalog shards: `data/containers.json`, `data/retailer-containers.json`, `data/sterilite-clear-storage.json`, `data/sterilite-open-utility.json`, `data/cambro-containers.json`, `data/quantum-containers.json`, `data/uline-containers.json`, and `data/really-useful-containers.json`. All shards use `data/schema.json`. Unknown product facts are `null`, not estimates.
+`data/catalog.json` lists 13 catalog shards. All shards use `data/schema.json`. Unknown product facts are `null`, not estimates. Source notes preserve qualifiers such as bottom-interior dimensions, pack-level SKUs, water-resistance claims, and retailer-specific product identifiers.
 
-## Verified commands
+## Verification
 Run from the repository root:
 ```sh
 npm run check
@@ -32,7 +32,7 @@ node --check app.js
 git diff --check
 ```
 
-The expected catalog validator result is 64 records / 64 unique IDs across 8 shards. The browser smoke test verifies a retailer-wave SKU before re-running the original HDPE, brand, fit, unit conversion, and purchase-preview checks. The manifest-driven loader automatically includes new shards.
+The expected catalog validator result is 94 records / 94 unique IDs across 13 shards. During this coordination pass, connected GitHub comparisons were used to detect concurrent branch movement and verify that merge trees retained both workers' shard sets rather than replacing one manifest with another. The current VM cannot resolve `github.com`, so publication and branch verification use the connected GitHub API; rerun the local validator/browser commands from a checkout when network-independent checkout access is available.
 
 ## Browser testing lesson
 The VM has `/usr/bin/chromium`, but environment policy can block normal localhost navigation even when a local server is healthy. Do not weaken browser security to get around this. `tests/browser_test.py` creates one self-contained HTML document, injects the checked-in CSS and JavaScript, and replaces `fetch()` with all catalog manifest/shard data. It then exercises the real DOM with Chromium through Playwright.
@@ -53,21 +53,23 @@ Good records need a stable manufacturer + SKU identity. Prefer manufacturer spec
 
 Catalog mining is sharded. Keep source families in separate shard files so parallel workers can add products without editing the same data file; reconcile only `data/catalog.json` at integration time. Validate globally for duplicate IDs and keep source-specific progress in `research/`.
 
-A retailer can still be a purchase source when dimensions come from a stronger SKU-matched source; document that join in `notes`. Do not derive missing capacity, weight, material, or interior dimensions from a nearby size in the same product family. Leave those fields `null` until sourced.
+When another worker advances `main`, do not replace its manifest with a stale feature-branch manifest. Reconcile the shard lists and create a merge commit whose tree contains both workers' files before publication. This session encountered two concurrent advances and merged both without force-updating shared refs.
+
+A retailer can still be a purchase source when dimensions come from a stronger SKU-matched source; document that join in `notes`. Do not derive missing capacity, weight, material, or interior dimensions from a nearby size in the same product family. Leave nullable fields `null` until sourced. Do not treat water resistance or a gasketed dust/moisture seal as a liquid-containment rating unless the source explicitly supports that claim.
 
 The Cambro 182612P148 food box has conflicting capacity values across current official Cambro pages. Its record documents the discrepancy and uses the internally consistent 64.4 L value rather than silently choosing the outlier.
 
-Tom Thumb and Safeway remain unresolved for the retailer wave. Both expose current food-storage products, but the searchable listings lacked physical dimensions, so adding them would make shelf-fit data speculative.
+Tom Thumb and Safeway remain unresolved. Their searchable listings lacked physical dimensions, so adding them would make shelf-fit data speculative.
 
 ## Next useful implementation work
 1. Resolve Tom Thumb and Safeway with exact SKU-to-dimension matches.
-2. Mine Buckhorn product families with stable manufacturer identifiers and external dimensions.
-3. Expand Cambro into Camwear/CamSquares and additional food-storage families.
-4. Expand Quantum QUS and related industrial-bin sizes beyond the first five verified SKUs.
-5. Expand Uline into additional house-brand bin, tote, crate, and liquid-capable families.
-6. Add field-level provenance if one product record starts depending on several specification pages.
-7. Add product photography only where reuse/hotlinking is appropriate; keep the current SVG schematic fallback for low bandwidth.
-8. Add stale-record tooling that selects records by `verified_at` and refreshes them in resumable batches.
+2. Continue exhaustive mining of remaining SKUs at completed retailers, especially Target, Walmart, Lowe's, Home Depot, Michaels, Hobby Lobby, Container Store, and Ace.
+3. Mine Buckhorn product families with stable manufacturer identifiers and external dimensions.
+4. Expand Cambro into Camwear/CamSquares and additional food-storage families.
+5. Expand Quantum QUS and related industrial-bin sizes beyond the first verified SKUs.
+6. Expand Uline into additional house-brand bin, tote, crate, and liquid-capable families.
+7. Add direct retailer purchase joins for manufacturer-only records where exact model matching is available.
+8. Add field-level provenance and stale-record refresh tooling as the catalog grows.
 
 ## Repository philosophy
 Keep copy concise and non-duplicative. Avoid AI-flavored filler and comments that merely restate code. Favor auditable data and deterministic search behavior. Each session should leave the codebase, data quality, tests, or research checkpoint measurably better than it found them.
