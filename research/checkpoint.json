@@ -1,9 +1,9 @@
 {
   "version": 1,
   "status": "paused",
-  "cursor": "coordinated-94-record-catalog",
-  "record_count": 94,
-  "shard_count": 13,
+  "cursor": "coordinated-156-record-catalog",
+  "record_count": 156,
+  "shard_count": 20,
   "completed_sources": [
     "Sterilite",
     "IRIS USA",
@@ -22,7 +22,8 @@
     "Cambro",
     "Quantum Storage",
     "Uline",
-    "Really Useful Box"
+    "Really Useful Box",
+    "Buckhorn"
   ],
   "blocked_sources": [
     "Tom Thumb",
@@ -32,9 +33,9 @@
     "Tom Thumb exact SKU dimensions",
     "Safeway exact SKU dimensions",
     "remaining completed-retailer SKUs",
-    "Buckhorn",
-    "Cambro Camwear and CamSquares",
-    "Quantum Storage remaining QUS sizes",
+    "Buckhorn attached-lid and bulk containers",
+    "Cambro translucent CamRounds and FreshPro families",
+    "Quantum clear-view recycled and other industrial-bin families",
     "Uline additional house-brand families"
   ],
   "updated_at": "2026-08-20"
