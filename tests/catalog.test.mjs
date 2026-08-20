@@ -61,3 +61,10 @@ test('retailer offers participate in text search',()=>{
   assert.equal(searchRecords([offered],{query:'Ace Hardware'}).length,1);
   assert.equal(searchRecords([offered],{query:'6084707'}).length,1);
 });
+
+test('unpublished descriptive metadata may be null',()=>{
+  const sparse={...byId('sterilite-18g-gray'),id:'sparse-metadata',translucency:null,colors:null,shape:null,handles:null,closure:null,wall_style:null};
+  assert.equal(searchRecords([sparse],{query:'Sterilite'}).length,1);
+  assert.equal(searchRecords([sparse],{lidded:true}).length,1);
+  assert.equal(searchRecords([sparse],{transparent:true}).length,0);
+});
