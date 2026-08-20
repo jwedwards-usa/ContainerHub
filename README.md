@@ -13,7 +13,7 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 - Compare external dimensions, internal dimensions when published, capacity and empty weight when published.
 - Open the source specification or preview the purchase page with a new-tab fallback for stores that block iframes.
 
-The catalog currently contains 40 verified products across manufacturer and retailer shards. The latest breadth wave adds clear storage boxes from 6–90 qt plus a lattice crate, open bins, dishpans, and a utility pail.
+The catalog currently contains 124 verified products across 17 manufacturer and retailer shards. The latest wave adds 14 Cambro CamSquares Classic containers: seven clear polycarbonate and seven translucent polypropylene sizes from 2–22 qt.
 
 ## Run locally
 ```sh
