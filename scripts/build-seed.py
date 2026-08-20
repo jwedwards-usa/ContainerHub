@@ -1,0 +1,59 @@
+import json, math, os
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+I=25.4
+LB=453.59237
+GAL=3785.411784
+QT=946.352946
+
+def mm(x): return round(x*I, 3)
+def g(lb): return round(lb*LB, 1) if lb is not None else None
+def ml_gal(v): return round(v*GAL) if v is not None else None
+def ml_qt(v): return round(v*QT) if v is not None else None
+def dims(a,b,c): return {'length':mm(a),'width':mm(b),'height':mm(c)}
+
+def rec(id,brand,name,model,category,source_site,source_url,purchase_site,purchase_url,material,translucency,colors,shape,handles,closure,wall_style,liquid_capable,stackable,nestable,wheels,external,internal,capacity_ml,max_load_g=None,empty_weight_g=None,notes=None):
+    return {
+      'id':id,'brand':brand,'name':name,'model':model,'category':category,
+      'source_site':source_site,'source_url':source_url,
+      'purchase_site':purchase_site,'purchase_url':purchase_url,'verified_at':'2026-08-20',
+      'material':material,'translucency':translucency,'colors':colors,'shape':shape,
+      'handles':handles,'closure':closure,'wall_style':wall_style,'liquid_capable':liquid_capable,
+      'stackable':stackable,'nestable':nestable,'wheels':wheels,
+      'external_mm':external,'internal_mm':internal,'capacity_ml':capacity_ml,
+      'max_load_g':max_load_g,'empty_weight_g':empty_weight_g,'notes':notes or [],
+      'image':f'assets/thumbs/{id}.svg'
+    }
+
+R=[]
+R += [rec('sterilite-18g-gray','Sterilite','18 Gallon Tote','2186','storage tote','Walmart','https://business.walmart.com/ip/Sterilite-18-Gallon-Tote-Box-Plastic-Titanium/716536537','Walmart','https://www.walmart.com/ip/716536537','plastic; resin not stated','opaque',['gray'],'rectangular','integrated end handles','snap-on removable lid','solid',False,True,False,False,dims(23.125,18.125,14.875),dims(16.75,13.75,14.375),ml_gal(18),empty_weight_g=g(3.59),notes=['Interior dimensions are measured at the bottom.']),
+rec('sterilite-20g-latch','Sterilite','20 Gallon Latch Tote','2217','storage tote','Sterilite','https://www.sterilite.com/product/20-gal-latch-tote/','Sterilite where to buy','https://www.sterilite.com/product/20-gal-latch-tote/','plastic; BPA- and phthalate-free','opaque',['flat gray','true blue'],'rectangular','integrated handles','removable latching lid','solid',False,True,False,False,dims(23.625,18.25,15.5),dims(18.125,14.875,14.375),ml_gal(20),notes=['Interior dimensions are measured at the bottom.']),
+rec('sterilite-27g-industrial-black','Sterilite','27 Gallon Industrial Tote','1466','industrial tote','Sterilite','https://www.sterilite.com/product/27-gal-industrial-tote/','Walmart','https://www.walmart.com/ip/39130944','plastic; BPA- and phthalate-free','opaque',['black'],'rectangular','integrated non-slip grip handles','tight-fit latching drip-resistant lid','solid reinforced',False,True,False,False,dims(30.5,20.625,15.25),dims(24.75,15.75,14.375),ml_gal(27),notes=['Interior dimensions are measured at the bottom.']),
+rec('sterilite-27g-industrial-yellow','Sterilite','27 Gallon Industrial Tote','5065','industrial tote','Sterilite','https://www.sterilite.com/product/27-gal-industrial-tote-2/','Target','https://www.target.com/p/-/A-1009156814','plastic; BPA- and phthalate-free','opaque',['black','yellow'],'rectangular','secure-grip handles','reinforced snap-fit lid','solid reinforced',False,True,False,False,dims(28.5,19.625,15.5),dims(23.375,14.625,14.75),ml_gal(27),notes=['Interior dimensions are measured at the bottom.']),
+rec('sterilite-30g-gray','Sterilite','30 Gallon Tote','1736','storage tote','Walmart','https://business.walmart.com/ip/Sterilite-30-Gallon-Tote-Box-Plastic-Gray/812507539','Walmart','https://business.walmart.com/ip/Sterilite-30-Gallon-Tote-Box-Plastic-Gray/812507539','plastic; BPA- and phthalate-free','opaque',['gray'],'rectangular','integrated textured handles','snap-on removable lid','solid',False,True,False,False,dims(30.5,19.875,16.375),dims(23.75,15.5,16),ml_gal(30),notes=['Interior dimensions are measured at the bottom.']),
+rec('sterilite-34g-latch','Sterilite','34 Gallon Latch Tote','2219','storage tote','Sterilite','https://www.sterilite.com/product/34-gal-latch-tote/','Sterilite where to buy','https://www.sterilite.com/product/34-gal-latch-tote/','plastic; BPA- and phthalate-free','opaque',['flat gray','true blue'],'rectangular','integrated handles','removable latching lid','solid',False,True,False,False,dims(31.625,20,17.25),dims(26,16.5,16.125),ml_gal(34),notes=['Interior dimensions are measured at the bottom.']),
+rec('sterilite-40g-wheeled','Sterilite','40 Gallon Wheeled Industrial Tote','1469','wheeled tote','Sterilite','https://www.sterilite.com/product/40-gal-wheeled-industrial-tote/','Sterilite where to buy','https://www.sterilite.com/product/40-gal-wheeled-industrial-tote/','plastic; BPA- and phthalate-free','opaque',['blue moonlight','black','flat gray','green sage'],'rectangular','rotating pull handle','tight-fit latching drip-resistant lid','solid reinforced',False,True,False,True,dims(36.75,21.375,18),dims(30.5,16,17.125),ml_gal(40),notes=['Interior dimensions are measured at the bottom.']),
+rec('iris-weatherpro-19qt','IRIS USA','WeatherPro 19 Quart Gasket Box','585426','sealed storage box','IRIS USA','https://www.irisusainc.com/products/storage-container-weatherpro-19-qt-gasket-box','IRIS USA','https://www.irisusainc.com/products/storage-container-weatherpro-19-qt-gasket-box','polypropylene; BPA-free','transparent',['clear','black'],'rectangular','molded side grips','four-buckle gasket lid','solid',True,True,True,False,dims(17.5,11.75,7.88),dims(14.75,9.625,7),ml_qt(19),max_load_g=g(25),empty_weight_g=g(2.2),notes=['Interior dimensions are measured at the lower usable footprint.','WeatherPro gasket is described as blocking moisture and dust; no IP rating is claimed.']),
+rec('iris-weatherpro-44qt','IRIS USA','WeatherPro 44 Quart Gasket Box','44QT','sealed storage box','Target','https://www.target.com/p/-/A-86888658','IRIS USA','https://www.irisusainc.com/products/storage-container-weatherpro-storage-box-2-pack-44qt-and-26-5qt-combo-gasket-box','plastic; resin not stated for this listing','transparent',['clear'],'rectangular','built-in handles','multi-latch gasket lid','solid',True,True,True,False,dims(19.7,15.75,11.02),dims(16.625,13,10.25),ml_qt(44),max_load_g=g(50),notes=['Interior dimensions are based on the IRIS brand-expert answer for the 44 qt box.','Current manufacturer purchase page is a two-box combo containing one 44 qt and one 26.5 qt WeatherPro box.']),
+rec('akro-39085-gray','Akro-Mils','Attached Lid Container 8 Gallon','39085','attached-lid tote','U.S. Plastic Corp.','https://www.usplastic.com/catalog/item.aspx?itemid=39461','U.S. Plastic Corp.','https://www.usplastic.com/catalog/item.aspx?itemid=39461','HDPE','opaque',['gray'],'rectangular','molded-in grip handles','attached interlocking lid with security eyes','solid reinforced',False,True,True,False,dims(21.5,15,9),dims(18.4375,13.25,8.625),ml_gal(8),max_load_g=g(35),empty_weight_g=g(5.45),notes=['Internal length and width use the listed bottom dimensions; height uses the listed internal height.']),
+rec('akro-39120-gray','Akro-Mils','Attached Lid Container 12 Gallon','39120','attached-lid tote','U.S. Plastic Corp.','https://www.usplastic.com/catalog/item.aspx?itemid=39462','U.S. Plastic Corp.','https://www.usplastic.com/catalog/item.aspx?itemid=39462','HDPE','opaque',['gray'],'rectangular','molded-in grip handles','attached interlocking lid with security eyes','solid reinforced',False,True,True,False,dims(21.5,15,12.5),dims(18.4375,13.25,12),ml_gal(12),max_load_g=g(65),empty_weight_g=g(6),notes=['Internal length and width use the listed bottom dimensions; height uses the listed internal height.']),
+rec('rubbermaid-brute-wheeled-32','Rubbermaid Commercial','Vented Wheeled BRUTE 32 Gallon','2179403','wheeled utility container','Rubbermaid Commercial','https://www.rubbermaidcommercial.com/utility-refuse/brute-containers/vented-wheeled-brute-container/?sku=2179403','WebstaurantStore','https://www.webstaurantstore.com/rubbermaid-brute-2179403-32-gallon-wheeled-round-gray-trash-can/6902179403GY.html','resin','opaque',['gray'],'round/handled','ergonomic integrated handle','open; lid sold separately','solid vented-channel',True,False,False,True,dims(26.52,26.14,34),None,ml_gal(32),max_load_g=g(180),empty_weight_g=g(11.5),notes=['Manufacturer gives product length and width separately; shelf fit uses that bounding box.']),
+rec('rubbermaid-brute-wheeled-44','Rubbermaid Commercial','Vented Wheeled BRUTE 44 Gallon','2131929','wheeled utility container','Rubbermaid Commercial','https://www.rubbermaidcommercial.com/utility-refuse/brute-containers/vented-wheeled-brute-container/?sku=2131929','WebstaurantStore','https://www.webstaurantstore.com/rubbermaid-2131929-brute-44-gallon-gray-wheeled-round-trash-can/6902131929GY.html','resin','opaque',['gray'],'round/handled','ergonomic integrated handle','open; lid sold separately','solid vented-channel',True,False,False,True,dims(28.36,27.57,35.75),None,ml_gal(44),max_load_g=g(250),empty_weight_g=g(15.5),notes=['Manufacturer gives product length and width separately; shelf fit uses that bounding box.']),
+rec('rubbermaid-brute-20-lid','Rubbermaid Commercial','BRUTE 20 Gallon Can and Flat Lid','69020CLBKKIT','utility container','WebstaurantStore','https://www.webstaurantstore.com/rubbermaid-brute-20-gallon-black-executive-trash-can-and-lid/69020CLBKKIT.html','WebstaurantStore','https://www.webstaurantstore.com/rubbermaid-brute-20-gallon-black-executive-trash-can-and-lid/69020CLBKKIT.html','heavy-duty plastic','opaque',['black'],'round','integrated side handles','removable flat lid','solid vented-channel',True,True,True,False,dims(19.875,19.875,23.5),None,ml_gal(20),notes=['Diameter is represented as both length and width for shelf-fit calculations.']),
+rec('rubbermaid-brute-32-funnel','Rubbermaid Commercial','BRUTE 32 Gallon Can with Funnel Top','690FG32FGYKT','utility container','WebstaurantStore','https://www.webstaurantstore.com/rubbermaid-brute-32-gallon-gray-trash-can-with-funnel-top-lid/690FG32FGYKT.html','WebstaurantStore','https://www.webstaurantstore.com/rubbermaid-brute-32-gallon-gray-trash-can-with-funnel-top-lid/690FG32FGYKT.html','heavy-duty plastic; lid HDPE','opaque',['gray'],'round','integrated side handles','funnel top lid','solid vented-channel',False,False,True,False,dims(21.875,21.875,32.875),None,ml_gal(32),notes=['Diameter is represented as both length and width for shelf-fit calculations.'])]
+
+out={'schema_version':1,'generated_at':'2026-08-20','records':R}
+(ROOT/'data/containers.json').write_text(json.dumps(out,separators=(',',':'))+'\n')
+
+# Tiny dimensionally-aware schematics; intentionally not product photography.
+for r in R:
+    d=r['external_mm']; L=d['length']; W=d['width']; H=d['height']
+    maxd=max(L,W,H); bw=max(62, min(118, 118*L/maxd)); bh=max(46, min(96, 96*H/maxd)); x=(160-bw)/2; y=118-bh
+    roundish='round' in r['shape']
+    if roundish:
+        body=f'<ellipse cx="80" cy="{y+8:.1f}" rx="{bw/2:.1f}" ry="8"/><path d="M{x:.1f},{y+8:.1f} L{x+5:.1f},110 Q80,124 {x+bw-5:.1f},110 L{x+bw:.1f},{y+8:.1f}"/><ellipse cx="80" cy="110" rx="{(bw-10)/2:.1f}" ry="6"/>'
+    else:
+        body=f'<path d="M{x:.1f},{y:.1f} L{x+bw:.1f},{y:.1f} L{x+bw-7:.1f},112 L{x+7:.1f},112 Z"/><path d="M{x:.1f},{y:.1f} l12,-8 h{max(10,bw-24):.1f} l12,8"/>'
+    svg=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 140" role="img" aria-label="{r['brand']} {r['name']} schematic"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">{body}</g><text x="80" y="132" text-anchor="middle" font-family="system-ui,sans-serif" font-size="8" fill="currentColor">{r['model']}</text></svg>'''
+    (ROOT/r['image']).write_text(svg)
+print(f'wrote {len(R)} records')

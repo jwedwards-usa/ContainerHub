@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "status": "paused",
+  "cursor": "seed-wave-1-complete",
+  "completed_sources": ["Sterilite", "IRIS USA", "Akro-Mils", "Rubbermaid Commercial"],
+  "next_sources": ["Cambro", "Quantum Storage", "Buckhorn", "Really Useful Box", "Uline house brands"],
+  "updated_at": "2026-08-20"
+}

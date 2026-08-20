@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Search and compare source-backed plastic containers by dimensions, capacity and construction.">
+  <title>ContainerHub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <a class="brand" href="./">ContainerHub</a>
+      <p>Plastic containers, normalized for fit.</p>
+    </div>
+    <button id="unitToggle" class="unit-toggle" type="button" aria-label="Switch units">Imperial</button>
+  </header>
+
+  <main>
+    <section class="search-panel" aria-label="Catalog search">
+      <label class="search-field">
+        <span>Search</span>
+        <input id="query" type="search" placeholder="brand, SKU, material, lid…" autocomplete="off">
+      </label>
+
+      <fieldset class="fit-box">
+        <legend>Shelf fit</legend>
+        <label><span>Width <small id="widthUnit">in</small></span><input id="shelfWidth" inputmode="decimal" type="number" min="0" step="0.01" placeholder="36"></label>
+        <label><span>Depth <small id="depthUnit">in</small></span><input id="shelfDepth" inputmode="decimal" type="number" min="0" step="0.01" placeholder="24"></label>
+        <label><span>Height <small id="heightUnit">in</small></span><input id="shelfHeight" inputmode="decimal" type="number" min="0" step="0.01" placeholder="18"></label>
+        <label class="check"><input id="fitOnly" type="checkbox"> Only containers that fit</label>
+        <label class="check"><input id="allowTipping" type="checkbox"> Allow containers on their side</label>
+      </fieldset>
+
+      <div class="filter-row">
+        <label>Brand<select id="brandFilter"><option value="">All brands</option></select></label>
+        <label class="check"><input id="lidded" type="checkbox"> Has lid</label>
+        <label class="check"><input id="transparent" type="checkbox"> Transparent</label>
+        <label class="check"><input id="wheels" type="checkbox"> Wheeled</label>
+        <button id="clear" type="button" class="ghost">Clear</button>
+      </div>
+    </section>
+
+    <section class="catalog-head">
+      <div><strong id="resultCount">0</strong> containers</div>
+      <div id="fitHint" class="muted">Enter shelf dimensions to rank by fit.</div>
+    </section>
+
+    <section id="results" class="results" aria-live="polite"></section>
+  </main>
+
+  <dialog id="previewDialog">
+    <div class="dialog-head">
+      <div><strong id="previewTitle">Purchase page</strong><div class="muted">Some stores block embedded previews.</div></div>
+      <button id="closePreview" type="button" class="ghost">Close</button>
+    </div>
+    <iframe id="previewFrame" title="Retailer product page" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
+    <a id="openPurchase" class="buy-link" target="_blank" rel="noopener noreferrer">Open retailer in new tab</a>
+  </dialog>
+
+  <template id="cardTemplate">
+    <article class="card">
+      <div class="thumb-wrap"><img class="thumb" alt="" loading="lazy"></div>
+      <div class="card-body">
+        <div class="eyebrow"></div>
+        <h2></h2>
+        <div class="chips"></div>
+        <dl class="specs"></dl>
+        <div class="fit-result"></div>
+        <details><summary>Source notes</summary><ul class="notes"></ul></details>
+        <div class="actions">
+          <button class="preview-buy" type="button">Preview purchase page</button>
+          <a class="source-link" target="_blank" rel="noopener noreferrer">Specs</a>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

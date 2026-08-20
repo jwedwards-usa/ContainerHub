@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://containerhub.example/schema/container-catalog-v1.json",
+  "title": "ContainerHub catalog",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "records"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "generated_at": {"type": "string", "format": "date"},
+    "records": {"type": "array", "items": {"$ref": "#/$defs/container"}}
+  },
+  "$defs": {
+    "dims": {
+      "type": "object",
+      "required": ["length", "width", "height"],
+      "properties": {"length":{"type":"number","exclusiveMinimum":0},"width":{"type":"number","exclusiveMinimum":0},"height":{"type":"number","exclusiveMinimum":0}},
+      "additionalProperties": false
+    },
+    "container": {
+      "type": "object",
+      "required": ["id","brand","name","model","category","source_site","source_url","purchase_site","purchase_url","verified_at","material","translucency","colors","shape","handles","closure","wall_style","liquid_capable","stackable","nestable","wheels","external_mm","internal_mm","capacity_ml","max_load_g","empty_weight_g","notes","image"],
+      "properties": {
+        "id":{"type":"string","pattern":"^[a-z0-9-]+$"},"brand":{"type":"string","minLength":1},"name":{"type":"string","minLength":1},"model":{"type":"string","minLength":1},"category":{"type":"string","minLength":1},
+        "source_site":{"type":"string","minLength":1},"source_url":{"type":"string","pattern":"^https://"},"purchase_site":{"type":"string","minLength":1},"purchase_url":{"type":"string","pattern":"^https://"},"verified_at":{"type":"string","pattern":"^\\d{4}-\\d{2}-\\d{2}$"},
+        "material":{"type":"string","minLength":1},"translucency":{"enum":["opaque","translucent","transparent"]},"colors":{"type":"array","minItems":1,"items":{"type":"string"}},"shape":{"type":"string"},"handles":{"type":"string"},"closure":{"type":"string"},"wall_style":{"type":"string"},
+        "liquid_capable":{"type":"boolean"},"stackable":{"type":"boolean"},"nestable":{"type":"boolean"},"wheels":{"type":"boolean"},"external_mm":{"$ref":"#/$defs/dims"},"internal_mm":{"anyOf":[{"$ref":"#/$defs/dims"},{"type":"null"}]},
+        "capacity_ml":{"type":["number","null"],"exclusiveMinimum":0},"max_load_g":{"type":["number","null"],"exclusiveMinimum":0},"empty_weight_g":{"type":["number","null"],"exclusiveMinimum":0},"notes":{"type":"array","items":{"type":"string"}},"image":{"type":"string","pattern":"^assets/thumbs/"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
