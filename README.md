@@ -2,6 +2,8 @@
 
 A static, source-backed catalog for comparing plastic containers by real dimensions and shelf fit. No backend and no build step are required.
 
+**Live site:** https://jwedwards-usa.github.io/ContainerHub/
+
 ## What works
 - Search across brand, model/SKU, material, closure, category, color and notes.
 - Filter by brand, lid, transparency and wheels.
