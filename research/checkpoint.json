@@ -1,9 +1,9 @@
 {
   "version": 1,
   "status": "active",
-  "cursor": "coordinated-317-record-all-worker-reconciliation",
-  "record_count": 317,
-  "shard_count": 45,
+  "cursor": "coordinated-326-record-all-worker-reconciliation",
+  "record_count": 326,
+  "shard_count": 46,
   "offer_count": 12,
   "completed_sources": [],
   "completed_families": [
@@ -38,7 +38,8 @@
     "Akro-Mils Akro-Grid",
     "Akro-Mils Nest & Stack Totes",
     "Akro-Mils Straight Wall Containers",
-    "Akro-Mils KeepBox"
+    "Akro-Mils KeepBox",
+    "Target Brightroom wave 3"
   ],
   "active_sources": [
     "The Container Store",
@@ -57,8 +58,8 @@
   ],
   "next_sources": [
     "complete retailer-by-retailer enumeration against research/retailer-coverage.json",
+    "Target remaining Brightroom and marketplace container SKUs after wave 3",
     "Walmart remaining plastic storage and food-storage containers",
-    "Target remaining Brightroom and marketplace container SKUs",
     "Home Depot remaining HDX and marketplace tubs",
     "Lowe's remaining Project Source and COMMANDER storage",
     "H-E-B, Tom Thumb, Safeway, and Brookshire's reusable food-storage and household containers",
