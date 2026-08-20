@@ -19,9 +19,17 @@ function humanizeHandle(handle){
   const special={qt:'Qt.',gal:'Gal.',bu:'Bu.',cup:'Cup',oz:'Oz.',ez:'EZ',clearview:'ClearView',stepon:'StepOn',touchtop:'TouchTop',swingtop:'SwingTop',hingelid:'HingeLID',ultraseal:'UltraSeal',ultra:'Ultra',hiphold:'HipHold',shelftotes:'ShelfTotes',tuff1:'Tuff1'};
   return value.split('-').map(word=>special[word]||`${word.charAt(0).toUpperCase()}${word.slice(1)}`).join(' ');
 }
+function modelId(prefix,model){return `${prefix}${model.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}`}
 
 function expandDataset(data){
   const defaults={...compactNulls,...(data.defaults||{})};
+  if(data.model_families){
+    return (data.families||[]).flatMap(family=>(family.models||[]).map(entry=>{
+      const item=typeof entry==='string'?{model:entry}:entry;
+      const model=item.model;
+      return {...defaults,brand:family.brand||defaults.brand,id:item.id||modelId(data.id_prefix,model),name:item.name||`${family.name} ${model}`,model,category:family.category||defaults.category,source_url:family.url,purchase_url:family.url,...item,notes:[...(defaults.notes||[]),...(family.notes||[]),...(item.notes||[])]};
+    }));
+  }
   if(data.index){
     if(!Array.isArray(data.items)||!data.items.length) return [];
     return data.items.map(item=>{
@@ -38,7 +46,9 @@ function expandDataset(data){
 
 for(const {name,data} of datasets){
   if(data.schema_version!==1) errors.push(`${name}: schema_version must be 1`);
-  if(data.index){
+  if(data.model_families){
+    if(!data.defaults||!data.id_prefix||!Array.isArray(data.families)) errors.push(`${name}: model-family shards require defaults, id_prefix and families`);
+  } else if(data.index){
     if(!data.defaults||!data.id_prefix||!data.url_prefix||!Array.isArray(data.items)) errors.push(`${name}: index shards require defaults, id_prefix, url_prefix and items`);
   } else if(!Array.isArray(data.records)) errors.push(`${name}: records must be an array`);
   const expanded=expandDataset(data);
