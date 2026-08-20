@@ -5,8 +5,7 @@ const els = {
   query:$('query'), shelfWidth:$('shelfWidth'), shelfDepth:$('shelfDepth'), shelfHeight:$('shelfHeight'),
   fitOnly:$('fitOnly'), allowTipping:$('allowTipping'), brand:$('brandFilter'), lidded:$('lidded'),
   transparent:$('transparent'), wheels:$('wheels'), clear:$('clear'), results:$('results'), resultCount:$('resultCount'),
-  fitHint:$('fitHint'), unitToggle:$('unitToggle'), dialog:$('previewDialog'), frame:$('previewFrame'),
-  previewTitle:$('previewTitle'), openPurchase:$('openPurchase'), closePreview:$('closePreview'), cardTemplate:$('cardTemplate')
+  fitHint:$('fitHint'), unitToggle:$('unitToggle'), cardTemplate:$('cardTemplate')
 };
 const storage={get(key){try{return localStorage.getItem(key)}catch{return null}},set(key,value){try{localStorage.setItem(key,value)}catch{}}};
 let unit = storage.get('containerhub-unit') || 'imperial';
@@ -68,9 +67,11 @@ function renderCard(item) {
   [...r.notes, `Verified ${r.verified_at} from ${r.source_site}.`].forEach(text=>{const li=document.createElement('li');li.textContent=text;notes.append(li)});
   node.querySelector('.source-link').href=r.source_url;
   const options=purchaseOptions(r);
-  const preview=node.querySelector('.preview-buy');
-  preview.textContent=`Preview ${options[0]?.retailer || r.purchase_site}`;
-  preview.addEventListener('click',()=>openPreview(options[0],r));
+  const purchase=node.querySelector('.purchase-link');
+  if(options[0]) {
+    purchase.href=options[0].url;
+    purchase.textContent=`Buy at ${options[0].retailer}`;
+  } else purchase.remove();
   const sellers=node.querySelector('.seller-links');
   options.slice(1).forEach(option=>{
     const a=document.createElement('a');
@@ -93,15 +94,6 @@ function render() {
   if (!items.length) { const empty=document.createElement('div'); empty.className='empty'; empty.textContent='No containers match these filters.'; els.results.append(empty); return; }
   const frag=document.createDocumentFragment(); items.forEach(i=>frag.append(renderCard(i))); els.results.append(frag);
 }
-
-function openPreview(option,r) {
-  if (!option) return;
-  els.previewTitle.textContent=`${option.retailer}: ${r.name}`;
-  els.frame.src=option.url;
-  els.openPurchase.href=option.url;
-  els.dialog.showModal();
-}
-function closePreview(){els.frame.src='about:blank';els.dialog.close()}
 
 function updateUnitUI() {
   els.unitToggle.textContent=unit==='imperial'?'Imperial':'Metric';
@@ -144,7 +136,6 @@ async function init() {
   document.querySelector('.search-panel').addEventListener('input',render);
   document.querySelector('.search-panel').addEventListener('change',render);
   els.unitToggle.addEventListener('click',switchUnit); els.clear.addEventListener('click',clearFilters);
-  els.closePreview.addEventListener('click',closePreview); els.dialog.addEventListener('close',()=>{els.frame.src='about:blank'});
 }
 
 init().catch(error=>{els.results.innerHTML=`<div class="empty">Could not load catalog: ${error.message}</div>`});
