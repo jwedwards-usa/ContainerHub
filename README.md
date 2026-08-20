@@ -13,7 +13,7 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 - Compare external dimensions, internal dimensions when published, capacity and empty weight when published.
 - Open the source specification or preview the purchase page with a new-tab fallback for stores that block iframes.
 
-The catalog currently contains 147 verified products across 20 manufacturer and retailer shards. The latest waves add all eight clear polycarbonate and all eight translucent polypropylene Cambro Classic CamRounds from 1–22 qt with current model-matched purchase links.
+The catalog currently contains 196 verified products across 27 manufacturer and retailer shards. Recent coordinated waves complete Cambro Classic CamRounds in clear Camwear polycarbonate, translucent polypropylene, and natural-white polyethylene; add FreshPro CamSquares; complete the current Quantum QUS sequence; and add Uline Clear Industrial Totes.
 
 ## Run locally
 ```sh
@@ -30,6 +30,6 @@ python3 tests/browser_test.py
 `npm run check` validates catalog invariants and runs the fit/search unit tests. The Playwright smoke test uses an in-memory bundle so it also runs in network-restricted environments.
 
 ## Data
-`data/catalog.json` is the catalog manifest; each listed JSON file is a deployable shard using `data/schema.json`. Measurements are canonicalized to millimeters, milliliters and grams. Unknown values are `null`, never estimates. See `AGENTS.md` for the research rules.
+`data/catalog.json` is the catalog manifest; each listed JSON file is a deployable shard using `data/schema.json`. Measurements are canonicalized to millimeters, milliliters and grams. Unknown values are `null`, never estimates. See `AGENTS.md` and `HANDOFF.md` for research and coordination rules.
 
-Generated SVG thumbnails are dimensional schematics rather than product photography. They average well under 1 KB each and keep the initial catalog usable on low-bandwidth connections.
+Generated SVG thumbnails are dimensional schematics rather than product photography. They keep the catalog usable on low-bandwidth connections.
