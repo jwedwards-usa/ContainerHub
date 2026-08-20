@@ -1,0 +1,28 @@
+{
+  "wave": "catalog-wave-2",
+  "status": "complete",
+  "updated_at": "2026-08-20",
+  "records_added": 30,
+  "batches": [
+    {"shard": "iris-wave-2.json", "records": 5, "focus": "IRIS WeatherPro and file storage"},
+    {"shard": "retail-wave-2.json", "records": 7, "focus": "Home Depot, Lowe's, Target, Walmart"},
+    {"shard": "target-brightroom-wave-2.json", "records": 7, "focus": "Brightroom latching-bin size family"},
+    {"shard": "homedepot-hdx-wave-3.json", "records": 6, "focus": "HDX tote size and closure family"},
+    {"shard": "michaels-wave-2.json", "records": 5, "focus": "Simply Tidy bins, crate, and craft cases"}
+  ],
+  "coordination": {
+    "concurrent_main_records": 40,
+    "concurrent_change": "14-record Sterilite breadth wave",
+    "resolution": "merged both shard sets without dropping either worker's files",
+    "combined_records": 70,
+    "combined_shards": 9
+  },
+  "quality_rules": [
+    "require stable sellable SKU or retailer item identity",
+    "require source-backed external dimensions",
+    "preserve interior-dimension qualifiers",
+    "leave nullable unsupported facts null",
+    "do not treat water resistance as liquid containment",
+    "keep purchase and source URLs HTTPS"
+  ]
+}

@@ -3,11 +3,18 @@
 Last updated: 2026-08-20
 
 ## Current state
-ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The catalog now contains 40 source-backed products: the original 15-record manufacturer seed, an 11-record retailer expansion, and a 14-record Sterilite breadth wave.
+ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The catalog now contains 70 source-backed products: the original 15-record manufacturer seed, an 11-record retailer expansion, a 14-record Sterilite breadth wave, and a 30-record catalog expansion completed in five source-specific batches.
 
-The retailer expansion covers The Container Store, Target, Walmart, Ace Hardware, The Home Depot, Lowe's, H-E-B, Hobby Lobby, Michaels, Brookshire's, and IRIS USA. Tom Thumb and Safeway were researched but not added because the current indexed listings did not expose SKU-level external dimensions required for shelf fit.
+The 30-record expansion adds:
+- 5 IRIS USA WeatherPro/file-storage SKUs;
+- 7 retailer SKUs from The Home Depot, Lowe's, Target, and Walmart;
+- 7 additional Target Brightroom latching-bin sizes from 5.8–110 qt;
+- 6 additional Home Depot HDX totes from 7–55 gal, including flip-top and wheeled/large formats already represented in the broader family;
+- 5 Michaels Simply Tidy bins, cases, and an open crate.
 
-The Sterilite breadth wave adds seven clear storage boxes from 6–90 qt plus a storage crate, three open bins, two dishpans, and a dual-spout utility pail. Unsupported interior dimensions, weights, and load ratings remain null rather than inferred.
+A concurrent worker added the 14-record Sterilite breadth wave while the 30-record expansion was in progress. The work was reconciled with a two-parent merge commit rather than overwriting either catalog manifest. The Sterilite wave remains intact alongside all five new shards.
+
+The retailer coverage includes The Container Store, Target, Walmart, Ace Hardware, The Home Depot, Lowe's, H-E-B, Hobby Lobby, Michaels, Brookshire's, and IRIS USA. Tom Thumb and Safeway were researched but not added because the indexed listings did not expose SKU-level external dimensions required for shelf fit.
 
 The UI supports:
 - free-text search across product identity and taxonomy fields;
@@ -19,10 +26,21 @@ The UI supports:
 - source links and purchase links, including an iframe preview dialog with a new-tab fallback;
 - lightweight SVG dimensional thumbnails.
 
-`data/catalog.json` lists four catalog shards: `data/containers.json`, `data/retailer-containers.json`, `data/sterilite-clear-storage.json`, and `data/sterilite-open-utility.json`. All shards use `data/schema.json`. Unknown product facts are `null`, not estimates.
+`data/catalog.json` lists nine catalog shards:
+- `data/containers.json`;
+- `data/retailer-containers.json`;
+- `data/sterilite-clear-storage.json`;
+- `data/sterilite-open-utility.json`;
+- `data/iris-wave-2.json`;
+- `data/retail-wave-2.json`;
+- `data/target-brightroom-wave-2.json`;
+- `data/homedepot-hdx-wave-3.json`;
+- `data/michaels-wave-2.json`.
 
-## Verified commands
-Run from the repository root:
+All shards use `data/schema.json`. Nullable product facts remain `null` rather than estimated. Source notes preserve qualifiers such as bottom-interior dimensions, pack-level SKUs, water-resistance claims, and retailer-specific product identifiers.
+
+## Verification
+Run from the repository root when network-independent checkout access is available:
 ```sh
 npm run check
 python3 tests/browser_test.py
@@ -30,7 +48,7 @@ node --check app.js
 git diff --check
 ```
 
-The expected catalog validator result is 40 records / 40 unique IDs across 4 shards. The browser smoke test verifies a retailer-wave SKU before re-running the original HDPE, brand, fit, unit conversion, and purchase-preview checks.
+The expected catalog validator result is 70 records / 70 unique IDs across 9 shards. The connected GitHub comparison from the concurrent Sterilite `main` to the merged catalog branch shows the branch ahead with no commits behind and exactly 30 added thumbnail files, five added data shards, and the manifest update. The current VM cannot resolve `github.com`, so publication and branch verification use the connected GitHub API instead of a local clone.
 
 ## Browser testing lesson
 The VM has `/usr/bin/chromium`, but environment policy can block normal localhost navigation even when a local server is healthy. Do not weaken browser security to get around this. `tests/browser_test.py` creates one self-contained HTML document, injects the checked-in CSS and JavaScript, and replaces `fetch()` with all catalog manifest/shard data. It then exercises the real DOM with Chromium through Playwright.
@@ -51,17 +69,20 @@ Good records need a stable manufacturer + SKU identity. Prefer manufacturer spec
 
 Catalog mining is sharded. Add each source wave to `data/catalog.json`, validate globally for duplicate IDs, and keep source-specific progress in `research/`. A retailer can still be a purchase source when dimensions come from a stronger SKU-matched source; document that join in `notes`.
 
-Do not derive missing capacity, weight, material, or interior dimensions from a nearby size in the same product family. Leave those fields `null` until sourced.
+When another worker advances `main`, do not replace its manifest with a stale feature-branch manifest. Reconcile the shard lists and create a merge commit whose tree contains both workers' files before publication.
+
+Do not derive missing capacity, weight, material, or interior dimensions from a nearby size in the same product family. Leave nullable fields `null` until sourced.
 
 Tom Thumb and Safeway remain unresolved for the retailer wave. Both expose current food-storage products, but the searchable listings lacked physical dimensions, so adding them would make shelf-fit data speculative.
 
 ## Next useful implementation work
 1. Resolve Tom Thumb and Safeway with exact SKU-to-dimension matches.
-2. Expand completed retailers and manufacturers beyond representative SKUs using resumable source batches.
-3. Add field-level provenance if one product record starts depending on several specification pages.
-4. Expand milk crates, food-service boxes, small-parts bins, nested industrial families, and liquid-capable vessels.
-5. Add product photography only where reuse/hotlinking is appropriate; keep the current SVG schematic fallback for low bandwidth.
-6. Add stale-record tooling that selects records by `verified_at` and refreshes them in resumable batches.
+2. Continue exhaustive retailer/manufacturer mining in resumable source shards, especially remaining Target, Walmart, Lowe's, Home Depot, Michaels, Hobby Lobby, Container Store, and Ace families.
+3. Add direct retailer purchase joins for manufacturer-only Sterilite records where exact model matching is available.
+4. Add field-level provenance if one product record starts depending on several specification pages.
+5. Expand Cambro, Quantum Storage, Buckhorn, Really Useful Box, Uline house brands, food-service boxes, small-parts bins, nested industrial families, and liquid-capable vessels.
+6. Add product photography only where reuse/hotlinking is appropriate; keep the SVG schematic fallback for low bandwidth.
+7. Add stale-record tooling that selects records by `verified_at` and refreshes them in resumable batches.
 
 ## Repository philosophy
 Keep copy concise and non-duplicative. Avoid AI-flavored filler and comments that merely restate code. Favor auditable data and deterministic search behavior. Each session should leave the codebase, data quality, tests, or research checkpoint measurably better than it found them.
