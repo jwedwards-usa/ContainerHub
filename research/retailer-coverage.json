@@ -12,7 +12,7 @@
   ],
   "retailers": [
     {"source":"The Container Store","enumeration_complete":false,"coverage":["STAK representative SKU","10 Clear Weathertight sizes"],"next":"remaining bins, boxes, totes, drawers, crates, and seasonal container SKUs"},
-    {"source":"Target","enumeration_complete":false,"coverage":["Brightroom latching, snap, underbed, heavy-duty, wheeled, and open-bin batches","existing manufacturer products sold by Target"],"next":"remaining Brightroom sizes, colors, seasonal variants, and in-scope marketplace SKUs"},
+    {"source":"Target","enumeration_complete":false,"coverage":["Brightroom latching, snap, underbed, heavy-duty, wheeled, open-bin, frosted-latch, waterproof and IP67 batches","existing manufacturer products sold by Target"],"next":"remaining Brightroom sizes, colors, seasonal variants, and in-scope marketplace SKUs after wave 3"},
     {"source":"Walmart","enumeration_complete":false,"coverage":["Sterilite and Really Useful Box batches","Mainstays meal-prep representative"],"next":"remaining storage totes, boxes, crates, food-storage containers, and in-scope marketplace SKUs"},
     {"source":"Ace Hardware","enumeration_complete":false,"coverage":["Craftsman 5/10/20/30 gallon family","Rubbermaid Roughneck and ActionPacker batch","selected Sterilite and IRIS offers"],"next":"remaining totes, boxes, bins, buckets, crates, and exact manufacturer joins"},
     {"source":"The Home Depot","enumeration_complete":false,"coverage":["HDX Tough sizes from 6.5 qt through 77 gal","selected 20 gallon totes and milk crate"],"next":"remaining HDX families, buckets, crates, organizers, and in-scope marketplace containers"},

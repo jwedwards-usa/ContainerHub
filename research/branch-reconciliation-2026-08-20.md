@@ -19,11 +19,11 @@ Overlapping seller, pack and configuration listings remain offers in `data/offer
 
 ## Branch ancestry
 
-The coordinated history preserves worker ancestry wherever branch heads are available, and content reconciliation always starts from the newest `main`. Historical worker and integration branches whose files had previously been copied without their branch heads were merged as additional parents while retaining the stronger coordinated tree. Stale manifests are never restored.
+The coordinated history preserves worker ancestry while always retaining the strongest current tree. Historical worker and integration branches whose files were previously copied without their branch heads were merged as additional parents rather than restoring stale manifests.
 
-During the late Akro pass, preview-dialog work advanced `main` several times. KeepBox and Straight Wall were rebuilt on the newest preview tree, and a subsequent ancestry-only merge recorded the KeepBox source/integration heads without changing the 317-product tree. Target wave 3 initially appeared as an asset-only branch, then grew to a nine-record shard; all nine TCINs were checked against the indexed coordinated catalog before integration and had no existing match.
+The closing audit rechecked all branches created during the 303-to-326 coordination window. `catalog/akro-keepbox-20260820`, `catalog/integration-keepbox-20260820`, `catalog/integration-315-20260820`, and `chore/317-akro-reconciliation-20260820` are ancestors of current `main`; `chore/326-target-reconciliation-20260820` was identical to `main` when checked. The final 326 reconciliation records `catalog/target-brightroom-wave-3-20260820` as merge ancestry after its nine unique product identities were already content-reconciled onto the current tree. Older named worker branches were covered by the prior ancestry-complete audit and remain represented through that newer main history.
 
-After the 326-product metadata merge, re-run the full branch inventory and compare every surfaced branch against `main`. Any branch with `ahead_by > 0` must be content-reconciled or ancestry-merged before publication.
+No open pull requests remain after the Straight Wall integration PR was merged.
 
 ## Current families added during final coordination
 
