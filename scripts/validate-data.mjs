@@ -18,7 +18,7 @@ let recordCount=0;
 
 for(const {name,data} of datasets){
   if(data.schema_version!==1) errors.push(`${name}: schema_version must be 1`);
-  if(!Array.isArray(data.records)) {errors.push(`${name}: records must be an array`); continue}
+  if(!Array.isArray(data.records)&&!Array.isArray(data.groups)) {errors.push(`${name}: records or groups must be an array`); continue}
   const records=expandShardRecords(data);
   recordCount+=records.length;
   for(const [i,r] of records.entries()){
