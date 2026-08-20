@@ -14,7 +14,7 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 - Compare external dimensions, internal dimensions, capacity and empty weight when published.
 - Open source specifications, product previews, primary purchase pages, and additional retailer offers.
 
-The catalog currently contains **317 verified product records across 45 shards**, plus **12 additional retailer/pack/configuration offers**. It preserves the coordinated Sterilite, IRIS, Akro-Mils, Rubbermaid, Cambro, Quantum, Uline, Really Useful Box and Buckhorn families, including all 13 current Uline Clear Plastic Shelf Bin sizes, all seven standard Cambro FreshPro CamRounds, 12 Akro-Grid dividable storage boxes, all nine current Akro-Mils Nest & Stack Tote models, both current KeepBox sizes, and 12 Akro-Mils Straight Wall configurations.
+The catalog currently contains **326 verified product records across 46 shards**, plus **12 additional retailer/pack/configuration offers**. It preserves the coordinated Sterilite, IRIS, Akro-Mils, Rubbermaid, Cambro, Quantum, Uline, Really Useful Box, Buckhorn and Brightroom families, including the current Akro-Mils Nest & Stack, Straight Wall and KeepBox waves plus nine additional Target Brightroom storage products spanning latching, frosted, IP67/sealed and wheeled formats.
 
 Retailer enumeration is tracked in `research/retailer-coverage.json`; no retailer is marked exhaustive until every in-scope sellable SKU or variant has an explicit outcome.
 
