@@ -3,27 +3,23 @@
 Last updated: 2026-08-20
 
 ## Current state
-ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The catalog now contains 110 source-backed products across 15 shards.
+ContainerHub is a working static GitHub Pages catalog with no backend and no required build step. The reconciled catalog contains **159 source-backed product records across 23 product shards**, plus **9 retailer/pack offers** in `data/offers.json`.
 
-The current catalog combines the original 15-record manufacturer seed, the 11-record retailer expansion, the 14-record Sterilite breadth wave, a 24-record food-service/industrial/direct-buy wave, a 30-record retailer/manufacturer expansion completed in five source-specific batches, and a 16-record Buckhorn straight-wall industrial tote wave.
+This reconciliation started from the current 110-record `main`, not the older retailer feature branch. The stale branch was 22 commits behind `main`, so overlapping Target, Home Depot, and IRIS records were discarded in favor of the newer `main` versions. Only 49 genuinely additive product identities were carried forward: 10 Container Store Weathertight sizes, 11 Ace Craftsman/Rubbermaid products, five Lowe's Project Source clear-latch sizes, 17 unique Target/Brightroom SKUs, four unique Home Depot HDX SKUs, IRIS WeatherPro 6.5 qt, and a Tom Thumb Signature Select 16 fl oz spray bottle.
 
-The 24-record concurrent wave adds eight Cambro polyethylene food boxes, five Quantum Storage Systems QUS stack-and-hang bins, eight Uline stackable bins, and three Really Useful Box latching storage boxes. The 30-record wave adds five IRIS USA WeatherPro/file-storage SKUs; seven Home Depot/Lowe's/Target/Walmart SKUs; seven additional Target Brightroom latching-bin sizes from 5.8–110 qt; six additional Home Depot HDX totes from 7–55 gal; and five Michaels Simply Tidy bins, cases, and an open crate.
-
-The 16-record Buckhorn wave adds the current straight-wall family from SW12070502 through SW48150802, using current sellable distributor listings with Buckhorn specification cross-checks and explicit notes for source conflicts.
-
-The retailer coverage includes The Container Store, Target, Walmart, Ace Hardware, The Home Depot, Lowe's, H-E-B, Hobby Lobby, Michaels, Brookshire's, IRIS USA, Uline, and Really Useful Box, with manufacturer/direct-source families from Sterilite, Cambro, Quantum Storage Systems, Akro-Mils, Rubbermaid Commercial, and Buckhorn. Tom Thumb and Safeway were researched but not added because the indexed listings did not expose SKU-level external dimensions required for shelf fit.
+The same Signature Select bottle is also currently sellable through Safeway; Safeway is represented as an additional retailer offer instead of a duplicate product record. Product identity and seller identity are now separate: one normalized product can have several retailer/pack offers.
 
 The UI supports:
-- free-text search across product identity and taxonomy fields;
+- free-text search across product identity, taxonomy, source/purchase retailer, and attached retailer offers;
 - brand, lid, translucency, and wheel filters;
 - imperial/metric input and display conversion;
 - shelf width/depth/height fit search;
 - base rotation by default and optional tipping;
 - ranking by number of identical containers that fit, then bounding-box utilization;
-- source links and purchase links, including an iframe preview dialog with a new-tab fallback;
-- lightweight SVG dimensional thumbnails.
+- source links, primary purchase preview, and direct links to additional sellers;
+- lightweight SVG dimensional thumbnails and generic schematic fallbacks.
 
-`data/catalog.json` lists 15 catalog shards. All shards use `data/schema.json`. Unknown product facts are `null`, not estimates. Source notes preserve qualifiers such as bottom-interior dimensions, pack-level SKUs, water-resistance claims, and retailer-specific product identifiers.
+Sellable products no longer need fabricated dimensions to enter the catalog. `external_mm: null` is allowed when geometry is genuinely unpublished; those products remain searchable and purchasable but are excluded from fit calculations.
 
 ## Verification
 Run from the repository root:
@@ -34,44 +30,40 @@ node --check app.js
 git diff --check
 ```
 
-The expected catalog validator result is 110 records / 110 unique IDs across 15 shards. During this coordination pass, connected GitHub comparisons were used to detect concurrent branch movement and verify that merge trees retained both workers' shard sets rather than replacing one manifest with another. The current VM cannot resolve `github.com`, so publication and branch verification use the connected GitHub API; rerun the local validator/browser commands from a checkout when network-independent checkout access is available.
+The expected validator result is:
+```text
+catalog valid: 159 records, 159 unique ids across 23 shards, 9 retailer offers
+```
 
-## Browser testing lesson
-The VM has `/usr/bin/chromium`, but environment policy can block normal localhost navigation even when a local server is healthy. Do not weaken browser security to get around this. `tests/browser_test.py` creates one self-contained HTML document, injects the checked-in CSS and JavaScript, and replaces `fetch()` with all catalog manifest/shard data. It then exercises the real DOM with Chromium through Playwright.
+The browser smoke test loads every manifest shard plus the offer file. It verifies the 159-record initial render, Safeway offer search, null-dimension fit exclusion, Ace offer search/link rendering, legacy SKU/material/brand search, shelf fit, unit conversion, and purchase preview.
 
-## Deployment lesson
-There are no GitHub Actions credits available for this project, and deployment must not depend on Actions. The site is intentionally raw static content, so no production build is needed today.
-
-Preferred publication shape:
-- `main`: source-of-truth repository contents;
-- `gh-pages`: ready-to-serve static tree;
-- while no build step exists, both branches can point to the same verified commit;
-- if a build step is introduced later, run it on the VM and commit/push only the built site to `gh-pages`.
-
-The VM may not be able to resolve or reach `github.com` for a normal `git push`. The connected GitHub API can create commits/refs without Actions and should be used as the fallback publication path.
+The local VM cannot resolve `github.com`, so publication and branch verification use the connected GitHub API rather than GitHub Actions or a normal `git push`.
 
 ## Data/research lessons
-Good records need a stable manufacturer + SKU identity. Prefer manufacturer specification pages, then established retailers that clearly match the same SKU. Capture external and internal dimensions separately and retain qualifiers in `notes` when dimensions are measured at the bottom, top, usable interior, etc.
+Good records need a stable manufacturer/brand + model/SKU identity. A second store selling the same item is an offer, not a second product. Put seller-specific SKUs, pack/color variants that share the same physical identity, and additional retailer URLs in `data/offers.json`.
 
-Catalog mining is sharded. Keep source families in separate shard files so parallel workers can add products without editing the same data file; reconcile only `data/catalog.json` at integration time. Validate globally for duplicate IDs and keep source-specific progress in `research/`.
+Do not reject a current sellable SKU solely because the retailer omits physical dimensions. Keep unpublished facts `null`; only the fit engine requires positive external dimensions.
 
-When another worker advances `main`, do not replace its manifest with a stale feature-branch manifest. Reconcile the shard lists and create a merge commit whose tree contains both workers' files before publication. This session encountered two concurrent advances and merged both without force-updating shared refs.
+Catalog mining is sharded. Keep source families in separate shard files so parallel workers can add products without editing the same data file; reconcile only `data/catalog.json` at integration time. Validate globally for duplicate IDs and duplicate brand/model identities.
 
-A retailer can still be a purchase source when dimensions come from a stronger SKU-matched source; document that join in `notes`. Do not derive missing capacity, weight, material, or interior dimensions from a nearby size in the same product family. Leave nullable fields `null` until sourced. Do not treat water resistance or a gasketed dust/moisture seal as a liquid-containment rating unless the source explicitly supports that claim.
+`research/retailer-coverage.json` is now the source of truth for exhaustive retailer progress. A retailer remains active until every in-scope sellable SKU or variant has been enumerated or given an explicit blocked/seasonal/marketplace outcome. A representative SKU or completed batch is not retailer completion.
 
-The Cambro 182612P148 food box has conflicting capacity values across current official Cambro pages. Its record documents the discrepancy and uses the internally consistent 64.4 L value rather than silently choosing the outlier.
+When another worker advances `main`, do not merge a stale manifest wholesale. Reconcile by product identity and retain the stronger/newer source record before adding only genuinely new identities.
 
-Tom Thumb and Safeway remain unresolved. Their searchable listings lacked physical dimensions, so adding them would make shelf-fit data speculative.
+Do not derive missing capacity, weight, material, interior dimensions, waterproofness, or liquid capability from a nearby SKU. Preserve conflicts and source qualifiers in notes.
 
-## Next useful implementation work
-1. Resolve Tom Thumb and Safeway with exact SKU-to-dimension matches.
-2. Continue exhaustive mining of remaining SKUs at completed retailers, especially Target, Walmart, Lowe's, Home Depot, Michaels, Hobby Lobby, Container Store, and Ace.
-3. Expand Buckhorn beyond the straight-wall family into attached-lid and bulk containers.
-4. Expand Cambro into Camwear/CamSquares and additional food-storage families.
-5. Expand Quantum QUS and related industrial-bin sizes beyond the first verified SKUs.
-6. Expand Uline into additional house-brand bin, tote, crate, and liquid-capable families.
-7. Add direct retailer purchase joins for manufacturer-only records where exact model matching is available.
-8. Add field-level provenance and stale-record refresh tooling as the catalog grows.
+## Next useful research work
+1. Continue each requested retailer from `research/retailer-coverage.json` until its enumeration is actually complete.
+2. Prioritize Walmart and Target because their storage/marketplace inventories are broad and change frequently.
+3. Continue Home Depot HDX/marketplace and Lowe's Project Source/COMMANDER families.
+4. Mine H-E-B, Tom Thumb, Safeway, and Brookshire's reusable food-storage/household container categories without requiring dimensions as an admission gate.
+5. Expand Hobby Lobby and Michaels craft-storage cases, organizers, crates, and bins.
+6. Finish Container Store and Ace remaining tote/bin/box families.
+7. Continue direct-manufacturer breadth for IRIS, Cambro, Quantum, Buckhorn, Uline, and related US-sellable families.
+8. Add stale-record refresh tooling and field-level provenance as catalog size grows.
+
+## Deployment
+There are no GitHub Actions credits available for this project and deployment must not depend on Actions. The site is already raw static content. Keep `main` as source of truth and `gh-pages` on the same verified commit while no build step exists.
 
 ## Repository philosophy
-Keep copy concise and non-duplicative. Avoid AI-flavored filler and comments that merely restate code. Favor auditable data and deterministic search behavior. Each session should leave the codebase, data quality, tests, or research checkpoint measurably better than it found them.
+Keep copy concise and non-duplicative. Avoid generated filler and comments that merely restate code. Favor auditable data and deterministic search behavior. Each session should leave the codebase, data quality, coverage ledger, tests, or research checkpoint measurably better than it found them.
