@@ -11,20 +11,28 @@ const datasets=(manifest.shards||[]).map(name=>({
   name,
   data:JSON.parse(fs.readFileSync(new URL(`../data/${name}`,import.meta.url),'utf8'))
 }));
+const compactNulls={model:null,material:null,translucency:null,colors:null,shape:null,handles:null,closure:null,wall_style:null,liquid_capable:null,stackable:null,nestable:null,wheels:null,external_mm:null,internal_mm:null,capacity_ml:null,max_load_g:null,empty_weight_g:null,notes:[]};
+const required=['id','brand','name','model','category','source_site','source_url','purchase_site','purchase_url','verified_at','material','translucency','colors','shape','handles','closure','wall_style','liquid_capable','stackable','nestable','wheels','external_mm','internal_mm','capacity_ml','max_load_g','empty_weight_g','notes','image'];
 const ids=new Set();
 const identities=new Set();
 const sourceUrls=new Set();
 let recordCount=0;
 
+function expandRecord(data,raw){
+  if(!data.compact) return raw;
+  const defaults={...compactNulls,...(data.defaults||{})};
+  return {...defaults,...raw,notes:[...(defaults.notes||[]),...(raw.notes||[])]};
+}
+
 for(const {name,data} of datasets){
   if(data.schema_version!==1) errors.push(`${name}: schema_version must be 1`);
   if(!Array.isArray(data.records)) {errors.push(`${name}: records must be an array`); continue}
+  if(data.compact && (!data.defaults || typeof data.defaults!=='object')) errors.push(`${name}: compact shards require defaults`);
   recordCount+=data.records.length;
-  for(const [i,r] of data.records.entries()){
+  for(const [i,raw] of data.records.entries()){
+    const r=expandRecord(data,raw);
     const p=`${name}.records[${i}]`;
-    for(const key of ['id','brand','name','model','category','source_site','source_url','purchase_site','purchase_url','verified_at','material','translucency','colors','shape','handles','closure','wall_style','liquid_capable','stackable','nestable','wheels','external_mm','internal_mm','capacity_ml','max_load_g','empty_weight_g','notes','image']) {
-      if(!(key in r)) errors.push(`${p}.${key} is required`);
-    }
+    for(const key of required) if(!(key in r)) errors.push(`${p}.${key} is required`);
     if(ids.has(r.id)) errors.push(`${p}.id duplicate ${r.id}`); ids.add(r.id);
     if(r.model!=null){
       const identity=`${String(r.brand).toLowerCase()}|${String(r.model).toLowerCase()}`;
