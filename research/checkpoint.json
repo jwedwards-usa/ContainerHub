@@ -1,9 +1,9 @@
 {
   "version": 1,
   "status": "active",
-  "cursor": "coordinated-262-record-all-worker-reconciliation",
-  "record_count": 262,
-  "shard_count": 38,
+  "cursor": "coordinated-275-record-all-worker-reconciliation",
+  "record_count": 275,
+  "shard_count": 39,
   "offer_count": 11,
   "completed_sources": [],
   "completed_families": [
@@ -20,13 +20,15 @@
     "Cambro CamSquares FreshPro Camwear",
     "Quantum QUS standard/mobile models through QUS275MOB",
     "Uline Clear Industrial Totes",
+    "Uline Clear Plastic Shelf Bins",
     "Really Useful Box recovered 6.5, 19, 32, 42 and 64 litre sizes"
   ],
   "completed_batches": [
     "coordinated manufacturer and industrial catalog through 208 records",
     "retailer wave 1",
     "retailer reconciliation wave 2",
-    "all-worker orphan branch reconciliation"
+    "all-worker orphan branch reconciliation",
+    "late Uline clear shelf-bin recovery"
   ],
   "active_sources": [
     "The Container Store",
@@ -57,7 +59,7 @@
     "Akro-Mils Akro-Grid, Nest & Stack, Straight Wall, and KeepBox families",
     "Cambro FreshPro CamRounds",
     "Quantum non-QUS bin families",
-    "Uline additional house-brand families"
+    "Uline additional house-brand families beyond Clear Industrial Totes and Clear Plastic Shelf Bins"
   ],
   "updated_at": "2026-08-20"
 }

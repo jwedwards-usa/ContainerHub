@@ -1,20 +1,20 @@
 # Worker branch reconciliation — 2026-08-20
 
-Final integration target: 262 product records, 38 product shards, 11 retailer/pack offers.
+Final integration target: 275 product records, 39 product shards, 11 retailer/pack offers.
 
 ## Coordinated base
 
-Current `main` reached 257 products across 37 shards plus 9 offers by merging the retailer reconciliation on top of the 208-record manufacturer/industrial catalog. That tree already contains the Akro-Mils attached-lid completion and Buckhorn attached-lid worker shard.
+The prior all-worker reconciliation reached 262 products across 38 shards plus 11 offers. It preserved the 208-record manufacturer/industrial catalog, the retailer reconciliation, five recovered Really Useful Box sizes, and duplicate seller listings as offers.
 
 ## Recovered work
 
-`catalog/really-useful-box-wave` contained useful data that had not reached the coordinated tree. Five non-duplicate physical sizes are recovered: 6.5 L, 19 L, 32 L, 42 L and 64 L. The 4 L physical product already existed. The 9 L and 17 L Staples listings are reconciled as additional offers for the existing normalized products rather than duplicate records.
+`catalog/really-useful-box-wave` contributed five non-duplicate physical sizes: 6.5 L, 19 L, 32 L, 42 L and 64 L. Its 9 L and 17 L Staples listings are offers on existing normalized products.
 
-During the audit, `catalog/akro-alc-complete-20260820` and `agent/buckhorn-attached-lid-20260820` were initially identified as orphan work. Before final merge, another coordination pass advanced `main` and included both families. The integration was therefore rebuilt from that newer `main` rather than re-merging duplicate shards.
+`agent/uline-clear-shelf-bins-20260820` had a prepared 13-SKU Uline Clear Plastic Shelf Bin tree when the session was interrupted. The first late-worker audit saw the branch before that tree had been committed and therefore correctly reported zero files ahead at that instant. The prepared tree was subsequently committed as `658860c`, verified as two files ahead of the 262-product `main`, and merged into this reconciliation. No matching Uline shelf-bin IDs existed in the coordinated catalog.
 
 ## Superseded/content-covered branches
 
-The useful content from these branches is already present in current `main` or newer reconciled shards. Their stale manifests must not replace the coordinated tree:
+Useful content from the following branches is present in current `main` or stronger reconciled shards. Stale manifests must not replace the coordinated tree:
 
 - `agent/catalog-wave-2-20260820`
 - `agent/catalog-wave-3-20260820`
@@ -40,13 +40,11 @@ The useful content from these branches is already present in current `main` or n
 - `catalog/uline-clear-industrial-20260820`
 - `catalog/wave2-20260820`
 
-The late audit specifically confirmed `agent/uline-clear-shelf-bins-20260820` is 15 commits behind `main` with zero commits/files ahead, and `catalog/final-retailer-reconcile-v3` is 14 commits behind with zero commits/files ahead.
-
-Some branches are Git-history-diverged because prior coordination passes reconciled their files without preserving every branch head as a merge parent. Content coverage is the integration criterion; stale manifests and duplicate physical products are not reintroduced merely to make branch graphs converge.
+Some branches are Git-history-diverged because earlier coordination reconciled their files without preserving every branch head as a merge parent. Content coverage is the integration criterion; stale manifests and duplicate physical products are not reintroduced merely to make branch graphs converge.
 
 ## Duplicate handling
 
-Product identity is separate from seller identity. Pack variants and second retailers for the same physical container belong in `data/offers.json`. The Really Useful reconciliation follows that rule for the Staples 9 L and 17 L listings.
+Product identity is separate from seller identity. Pack variants and second retailers for the same physical container belong in `data/offers.json`.
 
 ## Publication rule
 

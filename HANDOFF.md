@@ -3,22 +3,22 @@
 Last updated: 2026-08-20
 
 ## Current state
-ContainerHub is a static GitHub Pages catalog with no backend and no required build step. The coordinated catalog contains **262 source-backed product records across 38 product shards**, plus **11 retailer/pack offers** in `data/offers.json`.
+ContainerHub is a static GitHub Pages catalog with no backend and no required build step. The coordinated catalog contains **275 source-backed product records across 39 product shards**, plus **11 retailer/pack offers** in `data/offers.json`.
 
-The final retailer reconciliation was rebuilt on top of the 208-record coordinated `main`, so all concurrent Akro-Mils, Buckhorn, Cambro, Quantum and Uline work is preserved. A final worker-branch audit then recovered five additional Really Useful Box sizes that had never reached the coordinated tree. The overlapping Really Useful 9 L and 17 L Staples listings are represented as additional seller offers rather than duplicate product identities.
+The all-worker reconciliation preserves the manufacturer/industrial waves, retailer breadth waves, five recovered Really Useful Box sizes, and the late Uline shelf-bin worker recovery. The Uline recovery adds all 13 current Clear Plastic Shelf Bin SKUs with direct Uline purchase pages, actual outside dimensions, inside dimensions, static load ratings, unit weights, polypropylene material and nestable/non-stackable behavior.
 
-Recent manufacturer and industrial coverage includes the six-size Akro-Mils Attached Lid Container family, Buckhorn straight-wall and eight attached-lid totes, all three Cambro Classic CamRound material families, Classic and FreshPro CamSquares, the Quantum QUS sequence through QUS275MOB, all eight Uline Clear Industrial attached-lid tote sizes, and Really Useful Box sizes through 64 L represented by normalized physical products and retailer offers.
+Recent manufacturer and industrial coverage includes the six-size Akro-Mils Attached Lid Container family, Buckhorn straight-wall and eight attached-lid totes, all three Cambro Classic CamRound material families, Classic and FreshPro CamSquares, the Quantum QUS sequence through QUS275MOB, eight Uline Clear Industrial attached-lid totes, 13 Uline Clear Plastic Shelf Bins, and Really Useful Box sizes through 64 L.
 
-The reconciled retailer additions are 10 Container Store Clear Weathertight sizes, 11 Ace Craftsman/Rubbermaid products, five Lowe's Project Source clear-latch sizes, 17 unique Target/Brightroom SKUs, four unique Home Depot HDX SKUs, IRIS WeatherPro 6.5 qt, and a Tom Thumb Signature Select 16 fl oz spray bottle. The same Signature Select bottle is represented as an additional Safeway offer rather than a duplicate product.
+Reconciled retailer additions cover The Container Store, Ace, Lowe's, Target, Home Depot, Tom Thumb and Safeway. Product identity and seller identity are separate: duplicate retailer listings and pack/color offers belong in `data/offers.json`.
 
-`research/branch-reconciliation-2026-08-20.md` records the worker-branch audit, superseded branches, and recovered orphan work.
+`research/branch-reconciliation-2026-08-20.md` records worker-branch reconciliation, including the interrupted Uline branch that was initially audited before its prepared tree had been committed.
 
 ## Catalog behavior
-The UI supports free-text search across product identity, taxonomy, source/purchase retailer, and attached retailer offers; brand/lid/translucency/wheel filters; imperial/metric conversion; shelf fit and orientation handling; ranked fit counts; source links; primary purchase links; additional seller links; and lightweight SVG schematics.
+The UI supports free-text search across identity, taxonomy, source/purchase retailer and offers; brand/lid/translucency/wheel filters; imperial/metric conversion; shelf fit and orientation handling; ranked fit counts; source and purchase links; additional seller links; and lightweight SVG schematics.
 
-Sellable products may have `external_mm: null` when geometry is genuinely unpublished. They remain searchable and purchasable but are excluded from shelf-fit calculations. Product identity and seller identity are separate: additional retailers and pack/color offers that share one physical product live in `data/offers.json`.
+Sellable products may have `external_mm: null` when geometry is unpublished. They remain searchable and purchasable but are excluded from shelf-fit calculations.
 
-`data/catalog.json` lists 38 product shards. Unknown product facts stay `null`; never infer values from adjacent sizes.
+`data/catalog.json` lists 39 product shards. Unknown product facts stay `null`; never infer values from adjacent sizes.
 
 ## Verification
 Run from the repository root:
@@ -29,25 +29,25 @@ node --check app.js
 git diff --check
 ```
 
-The expected validator result is:
+Expected validator result:
 ```text
-catalog valid: 262 records, 262 unique ids across 38 shards, 11 retailer offers
+catalog valid: 275 records, 275 unique ids across 39 shards, 11 retailer offers
 ```
 
-The browser smoke test derives its expected initial render count directly from the manifest, then verifies Safeway offer search, null-dimension fit exclusion, Ace offer search/link rendering, legacy SKU/material/brand search, shelf fit, unit conversion, and purchase navigation.
+The browser smoke test derives its initial render count from the manifest and verifies offer search, null-dimension fit exclusion, retailer link rendering, legacy SKU/material/brand search, shelf fit, unit conversion and purchase navigation.
 
 The VM cannot reliably resolve `github.com`, so publication and branch verification use the connected GitHub API rather than GitHub Actions or a normal `git push`.
 
 ## Data and sourcing rules
-Prefer manufacturer specifications, then established retailers that clearly match the same model or SKU. Capture external and internal dimensions separately and preserve source qualifiers. Do not derive missing capacity, material, load rating, internal dimensions, empty weight, waterproofness, or liquid capability from neighboring products.
+Prefer manufacturer specifications, then established retailers that clearly match the same model or SKU. Capture external and internal dimensions separately and preserve source qualifiers. Do not derive missing capacity, material, load rating, internal dimensions, empty weight, waterproofness or liquid capability from neighboring products.
 
-A second retailer selling the same physical product is an offer, not a duplicate product. Put seller-specific SKUs, pack/color variants that share the same physical identity, and additional purchase URLs in `data/offers.json`.
+A second retailer selling the same physical product is an offer, not a duplicate product. Keep seller-specific SKUs, pack/color variants that share one physical identity, and additional purchase URLs in `data/offers.json`.
 
-Do not reject a current sellable SKU solely because the retailer omits physical dimensions. Keep unpublished facts `null`; only the fit engine requires positive external dimensions.
+Do not reject a current sellable SKU solely because physical dimensions are unpublished. Only the fit engine requires positive external dimensions.
 
-Catalog mining is sharded. Keep source families in separate files so parallel workers can add products without editing the same data file; reconcile only `data/catalog.json` at integration time. When another worker advances `main`, rebuild the integration tree from the new `main` and retain the stronger/newer duplicate before adding only genuinely new product identities.
+Keep source families in separate shard files so parallel workers can add products without editing the same data file. When practical, source-family commits should avoid `data/catalog.json`; reconcile the manifest only at integration time. If `main` advances, rebuild from the newer tree and retain the stronger/newer duplicate before adding only genuinely new identities.
 
-`research/retailer-coverage.json` is the source of truth for exhaustive retailer progress. A retailer remains active until every in-scope sellable SKU or variant has been enumerated or given an explicit blocked, seasonal, marketplace, unavailable, or duplicate-product outcome.
+`research/retailer-coverage.json` is the source of truth for exhaustive retailer progress. A retailer remains active until every in-scope sellable SKU or variant has an explicit completed, blocked, seasonal, marketplace, unavailable or duplicate-product outcome.
 
 ## Next useful work
 1. Continue every requested retailer from `research/retailer-coverage.json` until enumeration is actually complete.
@@ -56,7 +56,7 @@ Catalog mining is sharded. Keep source families in separate files so parallel wo
 4. Mine H-E-B, Tom Thumb, Safeway and Brookshire's reusable food-storage and household container categories without requiring dimensions as an admission gate.
 5. Expand Hobby Lobby and Michaels craft-storage cases, organizers, crates and bins.
 6. Finish Container Store and Ace remaining tote/bin/box families.
-7. Continue Buckhorn modular nesting/bulk, Akro-Mils Akro-Grid/Nest & Stack/Straight Wall/KeepBox, Cambro FreshPro CamRounds, Quantum non-QUS, Uline additional house-brand, and IRIS direct-manufacturer breadth.
+7. Continue Buckhorn modular nesting/bulk, Akro-Mils Akro-Grid/Nest & Stack/Straight Wall/KeepBox, Cambro FreshPro CamRounds, Quantum non-QUS, Uline families beyond Clear Industrial/Clear Shelf Bins, and IRIS direct-manufacturer breadth.
 8. Add stale-record refresh tooling and field-level provenance as catalog size grows.
 
 ## Deployment
