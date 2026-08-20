@@ -9,11 +9,12 @@ def bundled_html():
     catalog=(ROOT/'src/catalog.js').read_text().replace('export function ','function ')
     app=(ROOT/'app.js').read_text()
     app=re.sub(r"^import \{.*?\} from './src/catalog.js';\n",'',app,flags=re.S)
-    data={
-        './data/catalog.json':json.loads((ROOT/'data/catalog.json').read_text()),
-        './data/containers.json':json.loads((ROOT/'data/containers.json').read_text()),
-        './data/retailer-containers.json':json.loads((ROOT/'data/retailer-containers.json').read_text())
-    }
+    manifest=json.loads((ROOT/'data/catalog.json').read_text())
+    data={'./data/catalog.json':manifest}
+    for name in manifest['shards']:
+        data[f'./data/{name}']=json.loads((ROOT/'data'/name).read_text())
+    if manifest.get('offers'):
+        data[f'./data/{manifest["offers"]}']=json.loads((ROOT/'data'/manifest['offers']).read_text())
     shim=f"""const __DATA={json.dumps(data)};
 globalThis.fetch=async input=>{{
   const key=typeof input==='string'?input:input.url;
@@ -33,13 +34,27 @@ def main():
         errors=[]
         page.on('pageerror',lambda exc: errors.append(f'pageerror: {exc}'))
         page.set_content(bundled_html(),wait_until='load')
-        page.wait_for_function("document.querySelector('#resultCount').textContent === '26'")
-        assert page.locator('#resultCount').inner_text()=='26'
+        page.wait_for_function("document.querySelector('#resultCount').textContent === '245'")
+        assert page.locator('#resultCount').inner_text()=='245'
+
+        page.locator('#query').fill('Safeway')
+        assert page.locator('#resultCount').inner_text()=='1'
+        assert 'External dimensions unavailable' in page.locator('.fit-result').inner_text()
+        page.locator('#shelfWidth').fill('20'); page.locator('#shelfDepth').fill('20'); page.locator('#shelfHeight').fill('24')
+        page.locator('#fitOnly').check()
+        assert page.locator('#resultCount').inner_text()=='0'
+        page.locator('#clear').click()
+
+        page.locator('#query').fill('6084707')
+        assert page.locator('#resultCount').inner_text()=='1'
+        assert 'Buy at Ace Hardware' in page.locator('.seller-links').inner_text()
+        page.locator('#clear').click()
+
         page.locator('#query').fill('10791891')
         assert page.locator('#resultCount').inner_text()=='1'
         page.locator('#clear').click()
         page.locator('#query').fill('HDPE')
-        assert page.locator('#resultCount').inner_text()=='3'
+        assert page.locator('#resultCount').inner_text()=='19'
         page.locator('#clear').click()
         page.locator('#brandFilter').select_option('Rubbermaid Commercial')
         assert page.locator('#resultCount').inner_text()=='4'

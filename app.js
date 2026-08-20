@@ -29,6 +29,16 @@ function addSpec(dl,label,value) {
   dl.append(dt,dd);
 }
 
+function purchaseOptions(r) {
+  const options=[{retailer:r.purchase_site,url:r.purchase_url},...(r.offers||[])];
+  const seen=new Set();
+  return options.filter(option=>{
+    if(!option?.url || seen.has(option.url)) return false;
+    seen.add(option.url);
+    return true;
+  });
+}
+
 function renderCard(item) {
   const {record:r,fit}=item;
   const node=els.cardTemplate.content.firstElementChild.cloneNode(true);
@@ -44,7 +54,9 @@ function renderCard(item) {
   addSpec(dl,'Empty weight',weightLabel(r.empty_weight_g,unit));
   addSpec(dl,'Closure',r.closure);
   const fitBox=node.querySelector('.fit-result');
-  if (fit) {
+  if (!r.external_mm) {
+    fitBox.textContent='External dimensions unavailable; excluded from fit ranking.';
+  } else if (fit) {
     if (fit.count > 0) {
       fitBox.classList.add('good');
       fitBox.textContent=`Fits ${fit.count} per shelf: ${fit.across} across × ${fit.deep} deep × ${fit.high} high · ${Math.round(fit.utilization*100)}% bounding-box use`;
@@ -55,7 +67,17 @@ function renderCard(item) {
   const notes=node.querySelector('.notes');
   [...r.notes, `Verified ${r.verified_at} from ${r.source_site}.`].forEach(text=>{const li=document.createElement('li');li.textContent=text;notes.append(li)});
   node.querySelector('.source-link').href=r.source_url;
-  node.querySelector('.preview-buy').addEventListener('click',()=>openPreview(r));
+  const options=purchaseOptions(r);
+  const preview=node.querySelector('.preview-buy');
+  preview.textContent=`Preview ${options[0]?.retailer || r.purchase_site}`;
+  preview.addEventListener('click',()=>openPreview(options[0],r));
+  const sellers=node.querySelector('.seller-links');
+  options.slice(1).forEach(option=>{
+    const a=document.createElement('a');
+    a.className='seller-link'; a.href=option.url; a.target='_blank'; a.rel='noopener noreferrer';
+    a.textContent=`Buy at ${option.retailer}${option.channel?` via ${option.channel}`:''}`;
+    sellers.append(a);
+  });
   return node;
 }
 
@@ -72,10 +94,11 @@ function render() {
   const frag=document.createDocumentFragment(); items.forEach(i=>frag.append(renderCard(i))); els.results.append(frag);
 }
 
-function openPreview(r) {
-  els.previewTitle.textContent=`${r.purchase_site}: ${r.name}`;
-  els.frame.src=r.purchase_url;
-  els.openPurchase.href=r.purchase_url;
+function openPreview(option,r) {
+  if (!option) return;
+  els.previewTitle.textContent=`${option.retailer}: ${r.name}`;
+  els.frame.src=option.url;
+  els.openPurchase.href=option.url;
   els.dialog.showModal();
 }
 function closePreview(){els.frame.src='about:blank';els.dialog.close()}
@@ -102,8 +125,16 @@ async function fetchJson(path) {
 
 async function loadCatalog() {
   const manifest=await fetchJson('./data/catalog.json');
-  const catalogs=await Promise.all(manifest.shards.map(name=>fetchJson(`./data/${name}`)));
-  return catalogs.flatMap(catalog=>catalog.records);
+  const catalogPromise=Promise.all(manifest.shards.map(name=>fetchJson(`./data/${name}`)));
+  const offersPromise=manifest.offers ? fetchJson(`./data/${manifest.offers}`) : Promise.resolve({offers:[]});
+  const [catalogs,offerData]=await Promise.all([catalogPromise,offersPromise]);
+  const loaded=catalogs.flatMap(catalog=>catalog.records);
+  const byProduct=new Map();
+  for(const offer of offerData.offers || []) {
+    const list=byProduct.get(offer.product_id) || [];
+    list.push(offer); byProduct.set(offer.product_id,list);
+  }
+  return loaded.map(record=>({...record,offers:byProduct.get(record.id)||[]}));
 }
 
 async function init() {

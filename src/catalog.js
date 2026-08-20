@@ -3,11 +3,10 @@ const LB_G = 453.59237;
 const GAL_ML = 3785.411784;
 
 export function orientations(d, allowTipping = false) {
+  if (!d || !['length','width','height'].every(k => Number.isFinite(d[k]) && d[k] > 0)) return [];
   const values = [d.length, d.width, d.height];
   const raw = allowTipping
-    ? [
-        [0,1,2],[1,0,2],[0,2,1],[2,0,1],[1,2,0],[2,1,0]
-      ]
+    ? [[0,1,2],[1,0,2],[0,2,1],[2,0,1],[1,2,0],[2,1,0]]
     : [[0,1,2],[1,0,2]];
   const seen = new Set();
   return raw.map(([a,b,c]) => ({length: values[a], width: values[b], height: values[c]}))
@@ -20,7 +19,7 @@ export function orientations(d, allowTipping = false) {
 }
 
 export function fitForShelf(record, shelf, allowTipping = false) {
-  if (!shelf || !['width','depth','height'].every(k => Number.isFinite(shelf[k]) && shelf[k] > 0)) {
+  if (!record?.external_mm || !shelf || !['width','depth','height'].every(k => Number.isFinite(shelf[k]) && shelf[k] > 0)) {
     return null;
   }
   let best = null;
@@ -38,6 +37,10 @@ export function fitForShelf(record, shelf, allowTipping = false) {
   return best;
 }
 
+function offerTerms(record) {
+  return (record.offers || []).flatMap(offer => [offer.retailer, offer.retailer_sku, offer.seller_model, offer.channel]).filter(Boolean);
+}
+
 export function searchRecords(records, filters = {}) {
   const q = (filters.query || '').trim().toLowerCase();
   const brands = new Set(filters.brands || []);
@@ -50,13 +53,14 @@ export function searchRecords(records, filters = {}) {
     .filter(({record, fit}) => {
       const haystack = [record.brand, record.name, record.model, record.category, record.material,
         record.translucency, record.shape, record.handles, record.closure, record.wall_style,
-        ...(record.colors || []), ...(record.notes || [])].join(' ').toLowerCase();
+        record.source_site, record.purchase_site, ...(record.colors || []), ...(record.notes || []), ...offerTerms(record)]
+        .filter(Boolean).join(' ').toLowerCase();
       if (q && !haystack.includes(q)) return false;
       if (brands.size && !brands.has(record.brand)) return false;
       if (closures.size && ![...closures].some(c => record.closure.includes(c))) return false;
       if (filters.lidded === true && record.closure.startsWith('open')) return false;
       if (filters.transparent === true && record.translucency !== 'transparent') return false;
-      if (filters.wheels === true && !record.wheels) return false;
+      if (filters.wheels === true && record.wheels !== true) return false;
       if (fitOnly && (!fit || fit.count < 1)) return false;
       return true;
     })

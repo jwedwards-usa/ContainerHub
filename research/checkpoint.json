@@ -1,14 +1,30 @@
 {
   "version": 1,
-  "status": "paused",
-  "cursor": "coordinated-188-record-catalog",
-  "record_count": 188,
-  "shard_count": 26,
-  "completed_sources": [
-    "Sterilite",
-    "IRIS USA",
-    "Akro-Mils",
-    "Rubbermaid Commercial",
+  "status": "active",
+  "cursor": "coordinated-245-record-retailer-reconciliation",
+  "record_count": 245,
+  "shard_count": 35,
+  "offer_count": 9,
+  "completed_sources": [],
+  "completed_families": [
+    "Cambro CamSquares Classic Poly",
+    "Cambro CamSquares Classic Translucent",
+    "Cambro CamSquares Classic Camwear",
+    "Cambro CamRounds Classic Camwear",
+    "Cambro CamRounds Classic Translucent",
+    "Cambro CamRounds Classic Poly",
+    "Cambro CamSquares FreshPro Translucent",
+    "Cambro CamSquares FreshPro Camwear",
+    "Quantum QUS standard/mobile models through QUS275MOB",
+    "Uline Clear Industrial Totes",
+    "Buckhorn straight-wall family"
+  ],
+  "completed_batches": [
+    "manufacturer and industrial waves through the coordinated 196-record catalog",
+    "retailer wave 1",
+    "retailer reconciliation wave 2"
+  ],
+  "active_sources": [
     "The Container Store",
     "Target",
     "Walmart",
@@ -19,33 +35,23 @@
     "Hobby Lobby",
     "Michaels",
     "Brookshire's",
-    "Cambro",
-    "Quantum Storage Systems",
-    "Uline",
-    "Really Useful Box",
-    "Buckhorn"
-  ],
-  "completed_families": [
-    "Cambro CamSquares Classic Poly",
-    "Cambro CamSquares Classic Translucent",
-    "Cambro CamSquares Classic Camwear",
-    "Cambro CamRounds Classic Camwear",
-    "Cambro CamRounds Classic Translucent",
-    "Cambro CamSquares FreshPro Translucent",
-    "Cambro CamSquares FreshPro Camwear",
-    "Quantum QUS standard/mobile models through QUS275MOB",
-    "Uline Clear Industrial Totes"
-  ],
-  "blocked_sources": [
     "Tom Thumb",
-    "Safeway"
+    "Safeway",
+    "IRIS USA"
   ],
   "next_sources": [
-    "Tom Thumb exact SKU dimensions",
-    "Safeway exact SKU dimensions",
-    "remaining completed-retailer SKUs",
+    "complete retailer-by-retailer enumeration against research/retailer-coverage.json",
+    "Walmart remaining plastic storage and food-storage containers",
+    "Target remaining Brightroom and marketplace container SKUs",
+    "Home Depot remaining HDX and marketplace tubs",
+    "Lowe's remaining Project Source and COMMANDER storage",
+    "H-E-B, Tom Thumb, and Safeway food-storage and household container families",
+    "Hobby Lobby and Michaels craft storage",
+    "Brookshire's food-storage containers",
+    "The Container Store remaining bin, tote, drawer, and box families",
+    "Ace remaining tote and bin families",
     "Buckhorn attached-lid and bulk containers",
-    "Cambro FreshPro and Classic Poly CamRounds",
+    "Cambro FreshPro CamRounds",
     "Quantum non-QUS bin families",
     "Uline additional house-brand families"
   ],
