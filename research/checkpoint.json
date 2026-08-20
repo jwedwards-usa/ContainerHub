@@ -1,10 +1,10 @@
 {
   "version": 1,
   "status": "active",
-  "cursor": "coordinated-257-record-retailer-reconciliation",
-  "record_count": 257,
-  "shard_count": 37,
-  "offer_count": 9,
+  "cursor": "coordinated-262-record-all-worker-reconciliation",
+  "record_count": 262,
+  "shard_count": 38,
+  "offer_count": 11,
   "completed_sources": [],
   "completed_families": [
     "Akro-Mils Attached Lid Containers",
@@ -19,12 +19,14 @@
     "Cambro CamSquares FreshPro Translucent",
     "Cambro CamSquares FreshPro Camwear",
     "Quantum QUS standard/mobile models through QUS275MOB",
-    "Uline Clear Industrial Totes"
+    "Uline Clear Industrial Totes",
+    "Really Useful Box recovered 6.5, 19, 32, 42 and 64 litre sizes"
   ],
   "completed_batches": [
     "coordinated manufacturer and industrial catalog through 208 records",
     "retailer wave 1",
-    "retailer reconciliation wave 2"
+    "retailer reconciliation wave 2",
+    "all-worker orphan branch reconciliation"
   ],
   "active_sources": [
     "The Container Store",
