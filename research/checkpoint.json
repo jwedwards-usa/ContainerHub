@@ -1,9 +1,9 @@
 {
   "version": 1,
   "status": "paused",
-  "cursor": "coordinated-188-record-catalog",
-  "record_count": 188,
-  "shard_count": 26,
+  "cursor": "coordinated-200-record-catalog",
+  "record_count": 200,
+  "shard_count": 28,
   "completed_sources": [
     "Sterilite",
     "IRIS USA",
@@ -26,9 +26,11 @@
     "Buckhorn"
   ],
   "completed_families": [
+    "Akro-Mils Attached Lid Containers",
     "Cambro CamSquares Classic Poly",
     "Cambro CamSquares Classic Translucent",
     "Cambro CamSquares Classic Camwear",
+    "Cambro CamRounds Classic Poly",
     "Cambro CamRounds Classic Camwear",
     "Cambro CamRounds Classic Translucent",
     "Cambro CamSquares FreshPro Translucent",
@@ -45,7 +47,8 @@
     "Safeway exact SKU dimensions",
     "remaining completed-retailer SKUs",
     "Buckhorn attached-lid and bulk containers",
-    "Cambro FreshPro and Classic Poly CamRounds",
+    "Akro-Mils Akro-Grid and Nest & Stack families",
+    "Cambro FreshPro CamRounds",
     "Quantum non-QUS bin families",
     "Uline additional house-brand families"
   ],
