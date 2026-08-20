@@ -1,9 +1,9 @@
 {
   "version": 1,
   "status": "paused",
-  "cursor": "coordinated-94-record-catalog",
-  "record_count": 94,
-  "shard_count": 13,
+  "cursor": "coordinated-180-record-catalog",
+  "record_count": 180,
+  "shard_count": 25,
   "completed_sources": [
     "Sterilite",
     "IRIS USA",
@@ -20,9 +20,20 @@
     "Michaels",
     "Brookshire's",
     "Cambro",
-    "Quantum Storage",
+    "Quantum Storage Systems",
     "Uline",
-    "Really Useful Box"
+    "Really Useful Box",
+    "Buckhorn"
+  ],
+  "completed_families": [
+    "Cambro CamSquares Classic Poly",
+    "Cambro CamSquares Classic Translucent",
+    "Cambro CamSquares Classic Camwear",
+    "Cambro Camwear CamRounds",
+    "Cambro CamSquares FreshPro Translucent",
+    "Cambro CamSquares FreshPro Camwear",
+    "Quantum QUS standard/mobile models through QUS275MOB",
+    "Uline Clear Industrial Totes"
   ],
   "blocked_sources": [
     "Tom Thumb",
@@ -32,9 +43,9 @@
     "Tom Thumb exact SKU dimensions",
     "Safeway exact SKU dimensions",
     "remaining completed-retailer SKUs",
-    "Buckhorn",
-    "Cambro Camwear and CamSquares",
-    "Quantum Storage remaining QUS sizes",
+    "Buckhorn attached-lid and bulk containers",
+    "Cambro translucent and FreshPro CamRounds",
+    "Quantum non-QUS bin families",
     "Uline additional house-brand families"
   ],
   "updated_at": "2026-08-20"
