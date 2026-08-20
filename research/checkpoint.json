@@ -1,14 +1,17 @@
 {
   "version": 1,
-  "status": "paused",
-  "cursor": "coordinated-94-record-catalog",
-  "record_count": 94,
-  "shard_count": 13,
-  "completed_sources": [
-    "Sterilite",
-    "IRIS USA",
-    "Akro-Mils",
-    "Rubbermaid Commercial",
+  "status": "active",
+  "cursor": "retailer-reconciliation-wave-2",
+  "record_count": 159,
+  "shard_count": 23,
+  "offer_count": 9,
+  "completed_sources": [],
+  "completed_batches": [
+    "manufacturer seed and breadth waves through Buckhorn straight-wall",
+    "retailer wave 1",
+    "retailer reconciliation wave 2"
+  ],
+  "active_sources": [
     "The Container Store",
     "Target",
     "Walmart",
@@ -19,23 +22,21 @@
     "Hobby Lobby",
     "Michaels",
     "Brookshire's",
-    "Cambro",
-    "Quantum Storage",
-    "Uline",
-    "Really Useful Box"
-  ],
-  "blocked_sources": [
     "Tom Thumb",
-    "Safeway"
+    "Safeway",
+    "IRIS USA"
   ],
   "next_sources": [
-    "Tom Thumb exact SKU dimensions",
-    "Safeway exact SKU dimensions",
-    "remaining completed-retailer SKUs",
-    "Buckhorn",
-    "Cambro Camwear and CamSquares",
-    "Quantum Storage remaining QUS sizes",
-    "Uline additional house-brand families"
+    "complete retailer-by-retailer enumeration against research/retailer-coverage.json",
+    "Walmart remaining plastic storage and food-storage containers",
+    "Target remaining Brightroom and marketplace container SKUs",
+    "Home Depot remaining HDX and marketplace tubs",
+    "Lowe's remaining Project Source and COMMANDER storage",
+    "H-E-B, Tom Thumb, and Safeway food-storage families",
+    "Hobby Lobby and Michaels craft storage",
+    "Brookshire's food-storage containers",
+    "The Container Store remaining bin, tote, drawer, and box families",
+    "Ace remaining tote and bin families"
   ],
   "updated_at": "2026-08-20"
 }
