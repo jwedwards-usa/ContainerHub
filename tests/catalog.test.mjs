@@ -56,6 +56,13 @@ test('unknown external dimensions stay searchable but cannot pass fit-only',()=>
   assert.equal(searchRecords([missing],{shelf,fitOnly:true}).length,0);
 });
 
+test('nullable descriptive facts stay searchable and filter safe',()=>{
+  const partial={...byId('sterilite-18g-gray'),id:'partial-record',model:null,material:null,translucency:null,colors:null,shape:null,handles:null,closure:null,wall_style:null,external_mm:null,internal_mm:null};
+  assert.equal(searchRecords([partial],{query:'Sterilite'}).length,1);
+  assert.equal(searchRecords([partial],{lidded:true}).length,0);
+  assert.equal(searchRecords([partial],{closures:['lid']}).length,0);
+});
+
 test('retailer offers participate in text search',()=>{
   const offered={...byId('sterilite-20g-latch'),offers:[{retailer:'Ace Hardware',retailer_sku:'6084707',seller_model:'22173V06'}]};
   assert.equal(searchRecords([offered],{query:'Ace Hardware'}).length,1);
