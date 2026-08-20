@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "scope": "Sellable plastic containers available through the requested US retailers and IRIS USA. Excludes bags, wrap, disposable film, and non-container accessories.",
+  "status": "active",
+  "updated_at": "2026-08-20",
+  "definition_of_done": [
+    "Enumerate every in-scope sellable SKU or variant exposed by the retailer.",
+    "Normalize a shared manufacturer identity once and attach additional sellers in data/offers.json.",
+    "Record a stable purchase URL for every sellable entry.",
+    "Use null for unpublished dimensions and keep those entries out of fit ranking.",
+    "Document blocked, seasonal, marketplace, or pagination gaps instead of marking a retailer complete."
+  ],
+  "retailers": [
+    {"source":"The Container Store","enumeration_complete":false,"coverage":["STAK representative SKU","10 Clear Weathertight sizes"],"next":"remaining bins, boxes, totes, drawers, crates, and seasonal container SKUs"},
+    {"source":"Target","enumeration_complete":false,"coverage":["Brightroom latching, snap, underbed, heavy-duty, wheeled, and open-bin batches","existing manufacturer products sold by Target"],"next":"remaining Brightroom sizes, colors, seasonal variants, and in-scope marketplace SKUs"},
+    {"source":"Walmart","enumeration_complete":false,"coverage":["Sterilite and Really Useful Box batches","Mainstays meal-prep representative"],"next":"remaining storage totes, boxes, crates, food-storage containers, and in-scope marketplace SKUs"},
+    {"source":"Ace Hardware","enumeration_complete":false,"coverage":["Craftsman 5/10/20/30 gallon family","Rubbermaid Roughneck and ActionPacker batch","selected Sterilite and IRIS offers"],"next":"remaining totes, boxes, bins, buckets, crates, and exact manufacturer joins"},
+    {"source":"The Home Depot","enumeration_complete":false,"coverage":["HDX Tough sizes from 6.5 qt through 77 gal","selected 20 gallon totes and milk crate"],"next":"remaining HDX families, buckets, crates, organizers, and in-scope marketplace containers"},
+    {"source":"Lowe's","enumeration_complete":false,"coverage":["Project Source clear latch 6.5-66 qt","COMMANDER 12 and 27 gallon"],"next":"remaining Project Source, COMMANDER, buckets, crates, organizers, and marketplace containers"},
+    {"source":"H-E-B","enumeration_complete":false,"coverage":["Sterilite 18 gallon tote representative"],"next":"food-storage, utility, bucket, and storage-container categories"},
+    {"source":"Hobby Lobby","enumeration_complete":false,"coverage":["Card Keeper representative"],"next":"craft boxes, cases, organizers, bins, and totes"},
+    {"source":"Michaels","enumeration_complete":false,"coverage":["Simply Tidy bins, crate, latching case, adjustable case, and 5.9 qt case"],"next":"remaining craft-storage cases, organizers, bins, crates, and seasonal variants"},
+    {"source":"Brookshire's","enumeration_complete":false,"coverage":["GoodCook EveryWare extra-large rectangle"],"next":"remaining reusable food-storage and household plastic container SKUs"},
+    {"source":"Tom Thumb","enumeration_complete":false,"coverage":["Signature Select 16 fl oz spray bottle with unknown external dimensions"],"next":"food-storage, utility, bottle, and household container categories"},
+    {"source":"Safeway","enumeration_complete":false,"coverage":["Signature Select 16 fl oz spray bottle represented as an additional Safeway offer via Instacart"],"next":"food-storage, utility, bottle, and household container categories"},
+    {"source":"IRIS USA","enumeration_complete":false,"coverage":["WeatherPro 6.5, 19, 30, 44, 46, 74, 103, and 156 qt families plus file box","pack and color variants represented as offers where identity is shared"],"next":"remaining WeatherPro variants and other current sellable IRIS plastic container families"}
+  ]
+}
