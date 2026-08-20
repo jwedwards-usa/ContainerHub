@@ -1,15 +1,16 @@
 {
   "version": 1,
   "status": "active",
-  "cursor": "coordinated-303-record-all-worker-reconciliation",
-  "record_count": 303,
-  "shard_count": 43,
-  "offer_count": 11,
+  "cursor": "coordinated-305-record-all-worker-reconciliation",
+  "record_count": 305,
+  "shard_count": 44,
+  "offer_count": 12,
   "completed_sources": [],
   "completed_families": [
     "Akro-Mils Attached Lid Containers",
     "Akro-Mils Akro-Grid Dividable Plastic Storage Boxes",
     "Akro-Mils Nest & Stack Totes",
+    "Akro-Mils KeepBox",
     "Buckhorn straight-wall family",
     "Buckhorn attached-lid family",
     "Cambro CamSquares Classic Poly",
@@ -34,7 +35,8 @@
     "late Uline clear shelf-bin recovery",
     "Cambro FreshPro CamRounds",
     "Akro-Mils Akro-Grid",
-    "Akro-Mils Nest & Stack Totes"
+    "Akro-Mils Nest & Stack Totes",
+    "Akro-Mils KeepBox"
   ],
   "active_sources": [
     "The Container Store",
@@ -62,7 +64,7 @@
     "The Container Store remaining bin, tote, drawer, box, and crate families",
     "Ace remaining tote, bin, bucket, and crate families",
     "Buckhorn modular nesting and bulk containers",
-    "Akro-Mils Straight Wall and KeepBox families",
+    "Akro-Mils Straight Wall family",
     "Cambro FreshPro pails and other food-storage families",
     "Quantum non-QUS bin families",
     "Uline additional house-brand families beyond Clear Industrial Totes and Clear Plastic Shelf Bins"
