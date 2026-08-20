@@ -14,7 +14,7 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 - Compare external dimensions, internal dimensions when published, capacity and empty weight when published.
 - Open the source specification, preview the primary purchase page, or follow additional retailer offers for the same product identity.
 
-The catalog currently contains **245 verified product records across 35 shards**, plus **9 additional retailer/pack offers**. It includes the coordinated Cambro CamSquare/CamRound, Quantum QUS, Uline Clear Industrial, Buckhorn, Sterilite, IRIS and retailer breadth work alongside the reconciled Container Store, Ace, Lowe's, Target, Home Depot, Tom Thumb and Safeway additions.
+The catalog currently contains **262 verified product records across 38 shards**, plus **11 additional retailer/pack offers**. It includes coordinated Cambro CamSquare/CamRound, Quantum QUS, Uline Clear Industrial, Buckhorn straight-wall and attached-lid, Akro-Mils attached-lid, Sterilite, IRIS, Really Useful Box and retailer breadth work alongside the reconciled Container Store, Ace, Lowe's, Target, Home Depot, Tom Thumb and Safeway additions.
 
 Retailer enumeration is tracked in `research/retailer-coverage.json`; no retailer is marked exhaustive until every in-scope sellable SKU or variant has an explicit outcome.
 
