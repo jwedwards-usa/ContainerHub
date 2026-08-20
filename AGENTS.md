@@ -12,6 +12,8 @@ ContainerHub is a static GitHub Pages catalog. Keep it dependency-light, source-
 
 ## Catalog research
 - A product record needs a stable manufacturer/SKU identity, a source URL, and a purchase URL.
+- Product identity is the manufacturer/brand plus model or SKU. Do not duplicate one physical product just because several retailers sell it; put additional sellers in `data/offers.json`.
+- A sellable SKU may be cataloged with `external_mm: null` when dimensions are genuinely unpublished. It remains searchable and purchasable but must be excluded from shelf-fit ranking until geometry is sourced.
 - Record `verified_at` whenever a source is checked.
 - Dimensions must say whether they are external or internal. Preserve source semantics such as "interior at bottom" in `notes`.
 - Prefer manufacturer specifications, then established retailers with manufacturer SKU matching.
@@ -20,19 +22,20 @@ ContainerHub is a static GitHub Pages catalog. Keep it dependency-light, source-
 - Do not invent values to complete a record. Nullable fields are intentional.
 - `data/catalog.json` is the catalog manifest. Add shards there rather than hard-coding new catalog files in the app.
 - Retailer shards may use a stronger specification source with a separate retailer purchase URL when the retailer listing alone cannot support dimensions.
+- A retailer is not complete because a representative SKU was found. `research/retailer-coverage.json` is the enumeration ledger; mark a retailer complete only after every in-scope sellable SKU/variant has an explicit outcome.
 
 ## Research checkpoints
 - Work is chunked in `research/checkpoint.json` so mining can stop and resume.
-- Update `cursor`, `completed_sources`, and `updated_at` after each source batch.
+- Update the cursor, active/completed batches, counts, and `updated_at` after each source batch.
 - Refresh stale records in batches; do not rewrite verified fields unless the newer source is stronger.
-- `research/retailer-wave-1.json` records retailer coverage and unresolved sources from the first retailer expansion.
-- Seed wave 1 covers Sterilite, IRIS USA, Akro-Mils, and Rubbermaid Commercial. The checkpoint lists the next manufacturers to mine.
+- `research/retailer-wave-1.json` records the first retailer expansion; `research/retailer-coverage.json` tracks ongoing exhaustive coverage.
+- Seed wave 1 covers Sterilite, IRIS USA, Akro-Mils, and Rubbermaid Commercial. The checkpoint lists the next work.
 
 ## Fit/search behavior
-- A shelf fit is based on external dimensions.
+- A shelf fit is based on external dimensions. Records without external dimensions never participate in fit calculations.
 - Rotation on the base is allowed by default; tipping onto a side is opt-in.
 - Rank fit results by count first, then space utilization. Do not replace this with a per-dimension boolean check.
-- Text search should cover brand, model/SKU, material, category, color, closure, and notes.
+- Text search should cover brand, model/SKU, material, category, color, closure, notes, source/purchase site, and attached retailer offers.
 - Imperial/metric toggling changes display/input units only; stored values remain metric.
 
 ## Development environment used on 2026-08-20
