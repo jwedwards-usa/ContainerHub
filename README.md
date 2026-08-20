@@ -13,7 +13,7 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 - Compare external dimensions, internal dimensions when published, capacity and empty weight when published.
 - Open the source specification or preview the purchase page with a new-tab fallback for stores that block iframes.
 
-The catalog currently contains 147 verified products across 20 manufacturer and retailer shards. The latest waves add all eight clear polycarbonate and all eight translucent polypropylene Cambro Classic CamRounds from 1–22 qt with current model-matched purchase links.
+The catalog currently contains 155 verified products across 21 manufacturer and retailer shards. The latest waves complete all three Cambro Classic CamRound material families from 1–22 qt: clear Camwear polycarbonate, translucent polypropylene, and natural-white polyethylene.
 
 ## Run locally
 ```sh
