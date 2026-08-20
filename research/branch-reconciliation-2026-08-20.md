@@ -19,6 +19,7 @@ The useful content from these branches is already present in current `main` or n
 - `agent/catalog-wave-2-20260820`
 - `agent/catalog-wave-3-20260820`
 - `agent/buckhorn-attached-lid-20260820`
+- `agent/uline-clear-shelf-bins-20260820`
 - `catalog/akro-alc-complete-20260820`
 - `catalog/buckhorn-straight-wall-20260820`
 - `catalog/cambro-camrounds-wave`
@@ -30,6 +31,7 @@ The useful content from these branches is already present in current `main` or n
 - `catalog/cambro-translucent-camrounds-wave`
 - `catalog/exhaustive-retailer-wave`
 - `catalog/final-retailer-reconcile`
+- `catalog/final-retailer-reconcile-v3`
 - `catalog/integration-180-20260820`
 - `catalog/integration-188-20260820`
 - `catalog/quantum-qus-complete-20260820`
@@ -37,6 +39,8 @@ The useful content from these branches is already present in current `main` or n
 - `catalog/sterilite-breadth-wave`
 - `catalog/uline-clear-industrial-20260820`
 - `catalog/wave2-20260820`
+
+The late audit specifically confirmed `agent/uline-clear-shelf-bins-20260820` is 15 commits behind `main` with zero commits/files ahead, and `catalog/final-retailer-reconcile-v3` is 14 commits behind with zero commits/files ahead.
 
 Some branches are Git-history-diverged because prior coordination passes reconciled their files without preserving every branch head as a merge parent. Content coverage is the integration criterion; stale manifests and duplicate physical products are not reintroduced merely to make branch graphs converge.
 
