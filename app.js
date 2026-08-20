@@ -190,18 +190,29 @@ function humanizeHandle(handle) {
   return value.split('-').map(word=>special[word]||`${word.charAt(0).toUpperCase()}${word.slice(1)}`).join(' ');
 }
 
+function modelId(prefix,model) {
+  return `${prefix}${model.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}`;
+}
+
 function expandDataset(dataset) {
+  const defaults={...compactNulls,...(dataset.defaults||{})};
+  if (dataset.model_families) {
+    return dataset.families.flatMap(family=>(family.models||[]).map(entry=>{
+      const data=typeof entry==='string'?{model:entry}:entry;
+      const model=data.model;
+      return {...defaults,brand:family.brand||defaults.brand,id:data.id||modelId(dataset.id_prefix,model),name:data.name||`${family.name} ${model}`,model,category:family.category||defaults.category,source_url:family.url,purchase_url:family.url,...data,notes:[...(defaults.notes||[]),...(family.notes||[]),...(data.notes||[])]};
+    }));
+  }
   if (dataset.index) {
-    const defaults={...compactNulls,...(dataset.defaults||{})};
     return dataset.items.map(item=>{
       const data=typeof item==='string'?{handle:item}:item;
       const handle=data.handle;
       const url=data.url||`${dataset.url_prefix}${handle}/`;
-      return {...defaults,id:data.id||`${dataset.id_prefix}${handle}`,name:data.name||humanizeHandle(handle),source_url:data.source_url||url,purchase_url:data.purchase_url||url,...data,handle:undefined,notes:[...(defaults.notes||[]),...(data.notes||[])]};
+      const {handle:discard,...overrides}=data;
+      return {...defaults,id:data.id||`${dataset.id_prefix}${handle}`,name:data.name||humanizeHandle(handle),source_url:data.source_url||url,purchase_url:data.purchase_url||url,...overrides,notes:[...(defaults.notes||[]),...(data.notes||[])]};
     });
   }
   if (!dataset.compact) return dataset.records;
-  const defaults={...compactNulls,...(dataset.defaults||{})};
   return dataset.records.map(record=>({...defaults,...record,notes:[...(defaults.notes||[]),...(record.notes||[])]}));
 }
 
