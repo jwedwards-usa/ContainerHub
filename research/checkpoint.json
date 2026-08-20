@@ -1,7 +1,9 @@
 {
   "version": 1,
   "status": "paused",
-  "cursor": "catalog-wave-2-merged",
+  "cursor": "coordinated-94-record-catalog",
+  "record_count": 94,
+  "shard_count": 13,
   "completed_sources": [
     "Sterilite",
     "IRIS USA",
@@ -29,6 +31,7 @@
   "next_sources": [
     "Tom Thumb exact SKU dimensions",
     "Safeway exact SKU dimensions",
+    "remaining completed-retailer SKUs",
     "Buckhorn",
     "Cambro Camwear and CamSquares",
     "Quantum Storage remaining QUS sizes",
