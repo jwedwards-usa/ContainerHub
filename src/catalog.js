@@ -2,11 +2,17 @@ const INCH_MM = 25.4;
 const LB_G = 453.59237;
 const GAL_ML = 3785.411784;
 
+function groupRecords(group) {
+  if (Array.isArray(group?.records)) return group.records;
+  if (!Array.isArray(group?.fields) || !Array.isArray(group?.rows)) return [];
+  return group.rows.map(row=>Object.fromEntries(group.fields.map((field,index)=>[field,row[index]])));
+}
+
 export function expandCatalogShard(data) {
   if (Array.isArray(data?.records)) return data.records;
   return (data?.groups || []).flatMap(group => {
     const defaults=group?.defaults || {};
-    return (group?.records || []).map(record=>({...defaults,...record}));
+    return groupRecords(group).map(record=>({...defaults,...record}));
   });
 }
 
