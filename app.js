@@ -28,7 +28,7 @@ function formatDims(d) {
 
 function addSpec(dl,label,value) {
   const dt=document.createElement('dt'); dt.textContent=label;
-  const dd=document.createElement('dd'); dd.textContent=value;
+  const dd=document.createElement('dd'); dd.textContent=value ?? 'unknown';
   dl.append(dt,dd);
 }
 
@@ -64,7 +64,7 @@ function renderFit(fitBox,r,fit) {
 
 function renderNotes(container,r) {
   container.replaceChildren();
-  [...r.notes, `Verified ${r.verified_at} from ${r.source_site}.`].forEach(text=>{
+  [...(r.notes || []), `Verified ${r.verified_at} from ${r.source_site}.`].forEach(text=>{
     const li=document.createElement('li'); li.textContent=text; container.append(li);
   });
 }
@@ -194,7 +194,7 @@ async function loadCatalog() {
 
 async function init() {
   records=await loadCatalog();
-  [...new Set(records.map(r=>r.brand))].sort().forEach(brand=>{const o=document.createElement('option');o.value=o.textContent=brand;els.brand.append(o)});
+  [...new Set(records.map(r=>r.brand).filter(Boolean))].sort().forEach(brand=>{const o=document.createElement('option');o.value=o.textContent=brand;els.brand.append(o)});
   updateUnitUI(); render();
   document.querySelector('.search-panel').addEventListener('input',render);
   document.querySelector('.search-panel').addEventListener('change',render);
