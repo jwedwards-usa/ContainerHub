@@ -1,16 +1,20 @@
 # Worker branch reconciliation — 2026-08-20
 
-Final integration target: 275 product records, 39 product shards, 11 retailer/pack offers.
+Final integration target: 294 product records, 42 product shards, 11 retailer/pack offers.
 
 ## Coordinated base
 
-The prior all-worker reconciliation reached 262 products across 38 shards plus 11 offers. It preserved the 208-record manufacturer/industrial catalog, the retailer reconciliation, five recovered Really Useful Box sizes, and duplicate seller listings as offers.
+The prior all-worker reconciliation reached 275 products across 39 shards plus 11 offers. It preserved the manufacturer/industrial catalog, retailer reconciliation, five recovered Really Useful Box sizes, duplicate seller listings as offers, and the recovered Uline Clear Plastic Shelf Bin family.
 
-## Recovered work
+## Recovered and newly merged work
 
 `catalog/really-useful-box-wave` contributed five non-duplicate physical sizes: 6.5 L, 19 L, 32 L, 42 L and 64 L. Its 9 L and 17 L Staples listings are offers on existing normalized products.
 
-`agent/uline-clear-shelf-bins-20260820` had a prepared 13-SKU Uline Clear Plastic Shelf Bin tree when the session was interrupted. The first late-worker audit saw the branch before that tree had been committed and therefore correctly reported zero files ahead at that instant. The prepared tree was subsequently committed as `658860c`, verified as two files ahead of the 262-product `main`, and merged into this reconciliation. No matching Uline shelf-bin IDs existed in the coordinated catalog.
+`agent/uline-clear-shelf-bins-20260820` had a prepared 13-SKU Uline Clear Plastic Shelf Bin tree when an earlier session was interrupted. That tree was subsequently committed and merged; no matching shelf-bin IDs existed in the coordinated catalog.
+
+`catalog/cambro-freshpro-camrounds-20260820` adds seven current standard FreshPro CamRounds from 2–22 qt. Its source-family commit was merged with explicit parent ancestry after rebuilding the manifest on the latest main.
+
+`catalog/akro-grid-20260820` appeared after the previous final audit with 12 unique Akro-Grid dividable box records split across two shards. The two product shards and family thumbnail are merged here; its stale manifest is not used.
 
 ## Superseded/content-covered branches
 
@@ -34,7 +38,10 @@ Useful content from the following branches is present in current `main` or stron
 - `catalog/final-retailer-reconcile-v3`
 - `catalog/integration-180-20260820`
 - `catalog/integration-188-20260820`
+- `catalog/integration-all-262-20260820`
+- `catalog/integration-all-262-rebased-20260820`
 - `catalog/quantum-qus-complete-20260820`
+- `catalog/really-useful-box-wave`
 - `catalog/reconcile-exhaustive-wave`
 - `catalog/sterilite-breadth-wave`
 - `catalog/uline-clear-industrial-20260820`
