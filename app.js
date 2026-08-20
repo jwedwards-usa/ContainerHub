@@ -183,7 +183,23 @@ async function fetchJson(path) {
   return response.json();
 }
 
+function humanizeHandle(handle) {
+  let value=handle.replace(/-\d+$/,'');
+  value=value.replace(/(\d+)-(\d+)-(qt|gal|bu|cup|oz)(?=-|$)/g,'$1.$2 $3');
+  const special={qt:'Qt.',gal:'Gal.',bu:'Bu.',cup:'Cup',oz:'Oz.',ez:'EZ',clearview:'ClearView',stepon:'StepOn',touchtop:'TouchTop',swingtop:'SwingTop',hingelid:'HingeLID',ultraseal:'UltraSeal',ultra:'Ultra',hiphold:'HipHold',shelftotes:'ShelfTotes',tuff1:'Tuff1'};
+  return value.split('-').map(word=>special[word]||`${word.charAt(0).toUpperCase()}${word.slice(1)}`).join(' ');
+}
+
 function expandDataset(dataset) {
+  if (dataset.index) {
+    const defaults={...compactNulls,...(dataset.defaults||{})};
+    return dataset.items.map(item=>{
+      const data=typeof item==='string'?{handle:item}:item;
+      const handle=data.handle;
+      const url=data.url||`${dataset.url_prefix}${handle}/`;
+      return {...defaults,id:data.id||`${dataset.id_prefix}${handle}`,name:data.name||humanizeHandle(handle),source_url:data.source_url||url,purchase_url:data.purchase_url||url,...data,handle:undefined,notes:[...(defaults.notes||[]),...(data.notes||[])]};
+    });
+  }
   if (!dataset.compact) return dataset.records;
   const defaults={...compactNulls,...(dataset.defaults||{})};
   return dataset.records.map(record=>({...defaults,...record,notes:[...(defaults.notes||[]),...(record.notes||[])]}));
