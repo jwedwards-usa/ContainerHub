@@ -1,10 +1,10 @@
 {
   "version": 1,
   "status": "active",
-  "cursor": "coordinated-245-record-retailer-reconciliation",
-  "record_count": 245,
-  "shard_count": 35,
-  "offer_count": 9,
+  "cursor": "coordinated-262-record-all-worker-reconciliation",
+  "record_count": 262,
+  "shard_count": 38,
+  "offer_count": 11,
   "completed_sources": [],
   "completed_families": [
     "Cambro CamSquares Classic Poly",
@@ -17,12 +17,16 @@
     "Cambro CamSquares FreshPro Camwear",
     "Quantum QUS standard/mobile models through QUS275MOB",
     "Uline Clear Industrial Totes",
-    "Buckhorn straight-wall family"
+    "Buckhorn straight-wall family",
+    "Buckhorn attached-lid worker shard",
+    "Akro-Mils six-model attached-lid family",
+    "Really Useful Box recovered 6.5, 19, 32, 42 and 64 litre sizes"
   ],
   "completed_batches": [
     "manufacturer and industrial waves through the coordinated 196-record catalog",
     "retailer wave 1",
-    "retailer reconciliation wave 2"
+    "retailer reconciliation wave 2",
+    "all-worker orphan branch reconciliation"
   ],
   "active_sources": [
     "The Container Store",
@@ -50,7 +54,8 @@
     "Brookshire's food-storage containers",
     "The Container Store remaining bin, tote, drawer, and box families",
     "Ace remaining tote and bin families",
-    "Buckhorn attached-lid and bulk containers",
+    "Buckhorn bulk containers",
+    "Akro-Mils Akro-Grid, Nest & Stack, Straight Wall and KeepBox families",
     "Cambro FreshPro CamRounds",
     "Quantum non-QUS bin families",
     "Uline additional house-brand families"
