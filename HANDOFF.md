@@ -3,12 +3,12 @@
 Last updated: 2026-08-20
 
 ## Current state
-ContainerHub is a static GitHub Pages catalog with no backend and no required build step. The coordinated catalog contains 196 source-backed products across 27 shards.
+ContainerHub is a static GitHub Pages catalog with no backend and no required build step. The coordinated catalog contains 200 source-backed products across 28 shards.
 
-The current tree preserves all prior manufacturer and retailer waves. Recent coordinated work adds 16 FreshPro CamSquares, completes the Quantum QUS sequence with 17 more models, adds all eight Uline Clear Industrial attached-lid totes, and completes all three Cambro Classic CamRound material families.
+The current tree preserves all prior manufacturer and retailer waves. Recent coordinated work adds 16 FreshPro CamSquares, completes the Quantum QUS sequence with 17 more models, adds all eight Uline Clear Industrial attached-lid totes, completes all three Cambro Classic CamRound material families, and completes the six-size Akro-Mils Attached Lid Container family.
 
 ### Cambro Classic CamRounds
-The CamRounds catalog now covers every 1, 2, 4, 6, 8, 12, 18, and 22 qt size in clear Camwear polycarbonate, translucent polypropylene, and natural-white polyethylene. Current Cambro specifications provide capacities, diameters, materials, and heights. Model-matched KaTom pages provide direct purchase links. Diameter is stored as both length and width for shelf-fit calculations. Cambro publishes height with the compatible cover installed while covers are sold separately, so that qualifier is retained in every record. Case/shipping weights are not treated as individual empty-container weights.
+The CamRounds catalog covers every 1, 2, 4, 6, 8, 12, 18, and 22 qt size in clear Camwear polycarbonate, translucent polypropylene, and natural-white polyethylene. Current Cambro specifications provide capacities, diameters, materials, and heights. Model-matched KaTom pages provide direct purchase links. Diameter is stored as both length and width for shelf-fit calculations. Cambro publishes height with the compatible cover installed while covers are sold separately, so that qualifier is retained. Case/shipping weights are not treated as individual empty-container weights.
 
 ### Cambro FreshPro CamSquares
 FreshPro coverage includes translucent polypropylene mini 0.5 qt and 1 qt containers plus 2–22 qt translucent polypropylene and clear Camwear polycarbonate families. FreshPro uses its own cover system and geometry; covers are sold separately and are not interchangeable with Classic CamSquares.
@@ -16,9 +16,12 @@ FreshPro coverage includes translucent polypropylene mini 0.5 qt and 1 qt contai
 ### Quantum QUS and Uline Clear Industrial
 The Quantum expansion completes the current standard/mobile QUS sequence through QUS270 plus QUS275MOB, preserving model-specific load ratings. The Uline expansion covers all eight current Clear Industrial Tote sizes using outside-top dimensions, conservative bottom interior footprints, published inside heights, and individual empty weights where sourced.
 
+### Akro-Mils Attached Lid Containers
+The Akro-Mils ALC family is complete across models 39085, 39120, 39160, 39170, 39175, and 39280. The four newly added larger sizes use current Akro-Mils model/family specifications and current model-matched U.S. Plastic purchase pages. Bottom interior footprints are stored with published inside heights, and individual tare weights come from the current retailer listings.
+
 The UI supports free-text search, brand/lid/translucency/wheel filters, imperial/metric conversion, shelf fit and orientation handling, ranked fit counts, source/purchase links, iframe purchase previews with fallback, and lightweight SVG thumbnails.
 
-`data/catalog.json` lists 27 shards. All shards use `data/schema.json`. Unknown product facts stay `null`; do not infer values from adjacent sizes.
+`data/catalog.json` lists 28 shards. All shards use `data/schema.json`. Unknown product facts stay `null`; do not infer values from adjacent sizes.
 
 ## Verification
 Run from the repository root:
@@ -29,7 +32,9 @@ node --check app.js
 git diff --check
 ```
 
-The expected catalog validator result is 196 records / 196 unique IDs across 27 shards. Compare `main` immediately before integration and publication. If another worker advances it, rebuild the integration tree from the new `main`; never replace a newer manifest with a stale feature-branch manifest. If another worker lands the same family first, abandon the overlap and move to a different family.
+The expected catalog validator result is 200 records / 200 unique IDs across 28 shards. Compare `main` immediately before integration and publication. If another worker advances it, rebuild the integration tree from the new `main`; never replace a newer manifest with a stale feature-branch manifest. If another worker lands the same family first, abandon the overlap and move to a different family.
+
+The current VM cannot reliably resolve `github.com`, so publication and branch verification use the connected GitHub API. Rerun local validator/browser commands from a network-independent checkout when available.
 
 ## Data and sourcing rules
 Prefer manufacturer specifications, then established retailers that clearly match the same model or SKU. Capture external and internal dimensions separately and preserve qualifiers such as top/bottom measurements or dimensions with an accessory cover. Do not derive missing capacity, material, load rating, internal dimensions, or empty weight from neighboring products. Do not use case/shipping weight as tare unless the source explicitly identifies individual product weight.
@@ -45,10 +50,11 @@ There are no GitHub Actions credits available. The site is raw static content. P
 1. Resolve Tom Thumb and Safeway with exact SKU-to-dimension matches.
 2. Continue exhaustive SKU mining at Target, Walmart, Lowe's, Home Depot, Michaels, Hobby Lobby, The Container Store, and Ace.
 3. Expand Buckhorn into attached-lid and bulk containers.
-4. Expand Cambro into FreshPro CamRounds and additional food-storage families.
-5. Expand Quantum beyond QUS into other dimensioned bin families.
-6. Expand Uline into additional attached-lid, bulk, crate, shelf-bin, and liquid-capable families.
-7. Add field-level provenance and stale-record refresh tooling.
+4. Expand Akro-Mils into Akro-Grid, Nest & Stack, Straight Wall, and KeepBox families.
+5. Expand Cambro into FreshPro CamRounds and additional food-storage families.
+6. Expand Quantum beyond QUS into other dimensioned bin families.
+7. Expand Uline into additional attached-lid, bulk, crate, shelf-bin, and liquid-capable families.
+8. Add field-level provenance and stale-record refresh tooling.
 
 ## Repository philosophy
 Keep copy concise and non-duplicative. Avoid filler and comments that merely restate code. Favor auditable data and deterministic behavior. Leave data quality, coverage, tests, or research checkpoints measurably better than you found them.
