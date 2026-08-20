@@ -94,10 +94,20 @@ function switchUnit() {
 }
 function clearFilters(){[els.query,els.shelfWidth,els.shelfDepth,els.shelfHeight].forEach(e=>e.value='');[els.fitOnly,els.allowTipping,els.lidded,els.transparent,els.wheels].forEach(e=>e.checked=false);els.brand.value='';render()}
 
+async function fetchJson(path) {
+  const response=await fetch(path);
+  if (!response.ok) throw new Error(`Catalog request failed for ${path}: ${response.status}`);
+  return response.json();
+}
+
+async function loadCatalog() {
+  const manifest=await fetchJson('./data/catalog.json');
+  const catalogs=await Promise.all(manifest.shards.map(name=>fetchJson(`./data/${name}`)));
+  return catalogs.flatMap(catalog=>catalog.records);
+}
+
 async function init() {
-  const response=await fetch('./data/containers.json');
-  if (!response.ok) throw new Error(`Catalog request failed: ${response.status}`);
-  records=(await response.json()).records;
+  records=await loadCatalog();
   [...new Set(records.map(r=>r.brand))].sort().forEach(brand=>{const o=document.createElement('option');o.value=o.textContent=brand;els.brand.append(o)});
   updateUnitUI(); render();
   document.querySelector('.search-panel').addEventListener('input',render);

@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "verified_at": "2026-08-20",
+  "catalog_file": "data/retailer-containers.json",
+  "sources": [
+    {"source":"The Container Store","status":"cataloged","record_ids":["container-store-stak-long-wheels-10090393"]},
+    {"source":"Target","status":"cataloged","record_ids":["brightroom-45g-wheeled-89977310"]},
+    {"source":"Walmart","status":"cataloged","record_ids":["mainstays-meal-prep-2comp-1836475775"]},
+    {"source":"Ace Hardware","status":"cataloged","record_ids":["craftsman-20g-206412"]},
+    {"source":"The Home Depot","status":"cataloged","record_ids":["hdx-tough-17g-999-17g-hdx"]},
+    {"source":"Lowe's","status":"cataloged","record_ids":["project-source-commander-27g-44066"]},
+    {"source":"H-E-B","status":"cataloged","record_ids":["sterilite-18g-1731-rocket-red"]},
+    {"source":"Hobby Lobby","status":"cataloged","record_ids":["hobby-lobby-card-keeper-2649382"]},
+    {"source":"Michaels","status":"cataloged","record_ids":["simply-tidy-5-9qt-10791891"]},
+    {"source":"Brookshire's","status":"cataloged","record_ids":["goodcook-everyware-xl-076753108447"]},
+    {"source":"IRIS USA","status":"cataloged","record_ids":["iris-weatherpro-30qt-585438"]},
+    {"source":"Tom Thumb","status":"blocked","reason":"Current food-storage listings expose capacity/count but not SKU-level external dimensions."},
+    {"source":"Safeway","status":"blocked","reason":"Current food-storage listings expose capacity/count but not SKU-level external dimensions."}
+  ]
+}

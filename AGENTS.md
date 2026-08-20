@@ -18,11 +18,14 @@ ContainerHub is a static GitHub Pages catalog. Keep it dependency-light, source-
 - Every non-obvious field should be supportable by `sources` or the record's specification source.
 - Re-check purchase links and high-change fields before merging refreshed data.
 - Do not invent values to complete a record. Nullable fields are intentional.
+- `data/catalog.json` is the catalog manifest. Add shards there rather than hard-coding new catalog files in the app.
+- Retailer shards may use a stronger specification source with a separate retailer purchase URL when the retailer listing alone cannot support dimensions.
 
 ## Research checkpoints
 - Work is chunked in `research/checkpoint.json` so mining can stop and resume.
 - Update `cursor`, `completed_sources`, and `updated_at` after each source batch.
 - Refresh stale records in batches; do not rewrite verified fields unless the newer source is stronger.
+- `research/retailer-wave-1.json` records retailer coverage and unresolved sources from the first retailer expansion.
 - Seed wave 1 covers Sterilite, IRIS USA, Akro-Mils, and Rubbermaid Commercial. The checkpoint lists the next manufacturers to mine.
 
 ## Fit/search behavior

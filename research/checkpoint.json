@@ -1,8 +1,35 @@
 {
   "version": 1,
   "status": "paused",
-  "cursor": "seed-wave-1-complete",
-  "completed_sources": ["Sterilite", "IRIS USA", "Akro-Mils", "Rubbermaid Commercial"],
-  "next_sources": ["Cambro", "Quantum Storage", "Buckhorn", "Really Useful Box", "Uline house brands"],
+  "cursor": "retailer-wave-1-complete",
+  "completed_sources": [
+    "Sterilite",
+    "IRIS USA",
+    "Akro-Mils",
+    "Rubbermaid Commercial",
+    "The Container Store",
+    "Target",
+    "Walmart",
+    "Ace Hardware",
+    "The Home Depot",
+    "Lowe's",
+    "H-E-B",
+    "Hobby Lobby",
+    "Michaels",
+    "Brookshire's"
+  ],
+  "blocked_sources": [
+    "Tom Thumb",
+    "Safeway"
+  ],
+  "next_sources": [
+    "Tom Thumb exact SKU dimensions",
+    "Safeway exact SKU dimensions",
+    "Cambro",
+    "Quantum Storage",
+    "Buckhorn",
+    "Really Useful Box",
+    "Uline house brands"
+  ],
   "updated_at": "2026-08-20"
 }

@@ -9,8 +9,19 @@ def bundled_html():
     catalog=(ROOT/'src/catalog.js').read_text().replace('export function ','function ')
     app=(ROOT/'app.js').read_text()
     app=re.sub(r"^import \{.*?\} from './src/catalog.js';\n",'',app,flags=re.S)
-    data=(ROOT/'data/containers.json').read_text()
-    shim=f"const __DATA={data}; globalThis.fetch=async()=>new Response(JSON.stringify(__DATA),{{status:200,headers:{{'content-type':'application/json'}}}});"
+    data={
+        './data/catalog.json':json.loads((ROOT/'data/catalog.json').read_text()),
+        './data/containers.json':json.loads((ROOT/'data/containers.json').read_text()),
+        './data/retailer-containers.json':json.loads((ROOT/'data/retailer-containers.json').read_text())
+    }
+    shim=f"""const __DATA={json.dumps(data)};
+globalThis.fetch=async input=>{{
+  const key=typeof input==='string'?input:input.url;
+  const value=__DATA[key];
+  return value
+    ? new Response(JSON.stringify(value),{{status:200,headers:{{'content-type':'application/json'}}}})
+    : new Response('',{{status:404}});
+}};"""
     html=html.replace('<link rel="stylesheet" href="styles.css">',f'<style>{css}</style>')
     html=html.replace('<script type="module" src="app.js"></script>',f'<script type="module">{catalog}\n{shim}\n{app}</script>')
     return html
@@ -22,8 +33,11 @@ def main():
         errors=[]
         page.on('pageerror',lambda exc: errors.append(f'pageerror: {exc}'))
         page.set_content(bundled_html(),wait_until='load')
-        page.wait_for_function("document.querySelector('#resultCount').textContent === '15'")
-        assert page.locator('#resultCount').inner_text()=='15'
+        page.wait_for_function("document.querySelector('#resultCount').textContent === '26'")
+        assert page.locator('#resultCount').inner_text()=='26'
+        page.locator('#query').fill('10791891')
+        assert page.locator('#resultCount').inner_text()=='1'
+        page.locator('#clear').click()
         page.locator('#query').fill('HDPE')
         assert page.locator('#resultCount').inner_text()=='3'
         page.locator('#clear').click()
