@@ -2,16 +2,42 @@ const INCH_MM = 25.4;
 const LB_G = 453.59237;
 const GAL_ML = 3785.411784;
 
+const UNPUBLISHED_DEFAULTS = {
+  model:null, material:null, translucency:null, colors:null, shape:null, handles:null,
+  closure:null, wall_style:null, liquid_capable:null, stackable:null, nestable:null,
+  wheels:null, external_mm:null, internal_mm:null, capacity_ml:null, max_load_g:null,
+  empty_weight_g:null, notes:[]
+};
+
 function groupRecords(group) {
   if (Array.isArray(group?.records)) return group.records;
   if (!Array.isArray(group?.fields) || !Array.isArray(group?.rows)) return [];
   return group.rows.map(row=>Object.fromEntries(group.fields.map((field,index)=>[field,row[index]])));
 }
 
+function humanizeHandle(handle) {
+  return handle.replace(/-\d+$/,'').replace(/(\d+)-(\d+)-(qt|gal|bu|cup|oz)(?=-|$)/g,'$1.$2 $3')
+    .split('-').map(word=>word ? `${word.charAt(0).toUpperCase()}${word.slice(1)}` : '').join(' ');
+}
+
 export function expandCatalogShard(data) {
+  if (data?.index) {
+    const defaults={...UNPUBLISHED_DEFAULTS,...(data.defaults||{})};
+    return (data.items||[]).map(item=>{
+      const entry=typeof item==='string'?{handle:item}:item;
+      const handle=entry.handle;
+      const url=entry.url||`${data.url_prefix}${handle}/`;
+      const {handle:discard,...overrides}=entry;
+      return {...defaults,id:entry.id||`${data.id_prefix}${handle}`,name:entry.name||humanizeHandle(handle),source_url:entry.source_url||url,purchase_url:entry.purchase_url||url,...overrides,notes:[...(defaults.notes||[]),...(entry.notes||[])]};
+    });
+  }
+  if (data?.compact) {
+    const defaults={...UNPUBLISHED_DEFAULTS,...(data.defaults||{})};
+    return (data.records||[]).map(record=>({...defaults,...record,notes:[...(defaults.notes||[]),...(record.notes||[])]}));
+  }
   if (Array.isArray(data?.records)) return data.records;
   return (data?.groups || []).flatMap(group => {
-    const defaults=group?.defaults || {};
+    const defaults={...(data?.defaults||{}),...(group?.defaults||{})};
     return groupRecords(group).map(record=>({...defaults,...record}));
   });
 }

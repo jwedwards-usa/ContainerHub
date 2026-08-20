@@ -19,7 +19,7 @@ let recordCount=0;
 for(const {name,data} of datasets){
   if(data.schema_version!==1) errors.push(`${name}: schema_version must be 1`);
   const records=expandCatalogShard(data);
-  if(!Array.isArray(data.records)&&!Array.isArray(data.groups)) errors.push(`${name}: must contain records or groups`);
+  if(!Array.isArray(data.records)&&!Array.isArray(data.groups)&&!data.index) errors.push(`${name}: must contain records, groups, or an index`);
   recordCount+=records.length;
   for(const [i,r] of records.entries()){
     const p=`${name}.records[${i}]`;
@@ -27,8 +27,10 @@ for(const {name,data} of datasets){
       if(!(key in r)) errors.push(`${p}.${key} is required`);
     }
     if(ids.has(r.id)) errors.push(`${p}.id duplicate ${r.id}`); ids.add(r.id);
-    const identity=`${String(r.brand).toLowerCase()}|${String(r.model).toLowerCase()}`;
-    if(identities.has(identity)) errors.push(`${p} duplicate brand/model ${r.brand} ${r.model}`); identities.add(identity);
+    if(r.model!=null){
+      const identity=`${String(r.brand).toLowerCase()}|${String(r.model).toLowerCase()}`;
+      if(identities.has(identity)) errors.push(`${p} duplicate brand/model ${r.brand} ${r.model}`); identities.add(identity);
+    }
     for(const key of ['source_url','purchase_url']) {
       try{const u=new URL(r[key]);if(u.protocol!=='https:') errors.push(`${p}.${key} must be https`)}
       catch{errors.push(`${p}.${key} invalid URL`)}
