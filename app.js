@@ -38,7 +38,7 @@ function renderSpecs(dl,r) {
   addSpec(dl,'Internal',formatDims(r.internal_mm));
   addSpec(dl,'Capacity',capacityLabel(r.capacity_ml,unit));
   addSpec(dl,'Empty weight',weightLabel(r.empty_weight_g,unit));
-  addSpec(dl,'Closure',r.closure);
+  addSpec(dl,'Closure',r.closure || 'unknown');
 }
 
 function renderChips(container,r) {
@@ -100,11 +100,15 @@ function renderSellerLinks(container,options) {
   });
 }
 
+function recordEyebrow(r) {
+  return [r.brand,r.model].filter(Boolean).join(' · ');
+}
+
 function renderCard(item) {
   const {record:r,fit}=item;
   const node=els.cardTemplate.content.firstElementChild.cloneNode(true);
   const img=node.querySelector('.thumb'); img.src=r.image; img.alt=`${r.brand} ${r.name} dimensional schematic`;
-  node.querySelector('.eyebrow').textContent=`${r.brand} · ${r.model}`;
+  node.querySelector('.eyebrow').textContent=recordEyebrow(r);
   node.querySelector('h2').textContent=r.name;
   renderChips(node.querySelector('.chips'),r);
   renderSpecs(node.querySelector('.specs'),r);
@@ -119,7 +123,7 @@ function renderCard(item) {
 }
 
 function fillPreview(r,fit) {
-  els.previewEyebrow.textContent=`${r.brand} · ${r.model}`;
+  els.previewEyebrow.textContent=recordEyebrow(r);
   els.previewTitle.textContent=r.name;
   els.previewImage.src=r.image;
   els.previewImage.alt=`${r.brand} ${r.name} dimensional schematic`;
