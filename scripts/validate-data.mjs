@@ -14,18 +14,15 @@ const datasets=(manifest.shards||[]).map(name=>({
 }));
 const ids=new Set();
 const identities=new Set();
-const exactSources=new Set();
 let recordCount=0;
 
 for(const {name,data} of datasets){
   if(data.schema_version!==1) errors.push(`${name}: schema_version must be 1`);
   const records=expandCatalogShard(data);
   if(!Array.isArray(data.records)&&!Array.isArray(data.groups)&&!data.index) errors.push(`${name}: must contain records, groups, or an index`);
+  recordCount+=records.length;
   for(const [i,r] of records.entries()){
     const p=`${name}.records[${i}]`;
-    const sourceKey=`${String(r.brand).toLowerCase()}|${r.source_url}`;
-    if((data.compact||data.index)&&exactSources.has(sourceKey)) continue;
-    recordCount++;
     for(const key of ['id','brand','name','model','category','source_site','source_url','purchase_site','purchase_url','verified_at','material','translucency','colors','shape','handles','closure','wall_style','liquid_capable','stackable','nestable','wheels','external_mm','internal_mm','capacity_ml','max_load_g','empty_weight_g','notes','image']) {
       if(!(key in r)) errors.push(`${p}.${key} is required`);
     }
@@ -47,7 +44,6 @@ for(const {name,data} of datasets){
     }
     const imagePath=path.join(root.pathname,r.image);
     if(!fs.existsSync(imagePath)) errors.push(`${p}.image missing ${r.image}`);
-    exactSources.add(sourceKey);
   }
 }
 if(recordCount<10) errors.push('catalog must contain at least 10 records');
