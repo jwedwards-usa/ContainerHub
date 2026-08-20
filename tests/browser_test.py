@@ -66,10 +66,27 @@ def main():
         page.locator('#unitToggle').click()
         assert page.locator('#widthUnit').inner_text()=='mm'
         assert page.locator('#shelfWidth').input_value()=='508'
-        purchase=page.locator('.purchase-link')
-        assert purchase.get_attribute('href').startswith('https://www.webstaurantstore.com/')
+
+        purchase=page.locator('.card .purchase-link')
+        purchase_href=purchase.get_attribute('href')
+        card_title=page.locator('.card h2').inner_text()
+        assert purchase_href.startswith('https://www.webstaurantstore.com/')
         assert purchase.get_attribute('target')=='_blank'
-        assert page.locator('#previewDialog').count()==0
+        assert page.locator('.preview-button').inner_text()=='Preview'
+
+        page.set_viewport_size({"width":390,"height":844})
+        page.locator('.preview-button').click()
+        dialog=page.locator('#previewDialog')
+        assert dialog.evaluate('(e)=>e.open') is True
+        assert page.locator('#previewTitle').inner_text()==card_title
+        assert page.locator('#previewPurchase').get_attribute('href')==purchase_href
+        assert page.locator('iframe').count()==0
+        box=dialog.bounding_box()
+        assert box['x'] >= 0 and box['y'] >= 0
+        assert box['x'] + box['width'] <= 390.5
+        assert box['y'] + box['height'] <= 844.5
+        page.locator('#closePreview').click()
+        assert dialog.evaluate('(e)=>e.open') is False
         assert not errors, '\n'.join(errors)
         browser.close()
     print('browser smoke test passed')
