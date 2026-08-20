@@ -1,16 +1,17 @@
 {
   "version": 1,
   "status": "active",
-  "cursor": "coordinated-315-record-all-worker-reconciliation",
-  "record_count": 315,
-  "shard_count": 44,
-  "offer_count": 11,
+  "cursor": "coordinated-317-record-all-worker-reconciliation",
+  "record_count": 317,
+  "shard_count": 45,
+  "offer_count": 12,
   "completed_sources": [],
   "completed_families": [
     "Akro-Mils Attached Lid Containers",
     "Akro-Mils Akro-Grid Dividable Plastic Storage Boxes",
     "Akro-Mils Nest & Stack Totes",
     "Akro-Mils Straight Wall Containers",
+    "Akro-Mils KeepBox",
     "Buckhorn straight-wall family",
     "Buckhorn attached-lid family",
     "Cambro CamSquares Classic Poly",
@@ -36,7 +37,8 @@
     "Cambro FreshPro CamRounds",
     "Akro-Mils Akro-Grid",
     "Akro-Mils Nest & Stack Totes",
-    "Akro-Mils Straight Wall Containers"
+    "Akro-Mils Straight Wall Containers",
+    "Akro-Mils KeepBox"
   ],
   "active_sources": [
     "The Container Store",
@@ -64,10 +66,11 @@
     "The Container Store remaining bin, tote, drawer, box, and crate families",
     "Ace remaining tote, bin, bucket, and crate families",
     "Buckhorn modular nesting and bulk containers",
-    "Akro-Mils KeepBox family",
     "Cambro FreshPro pails and other food-storage families",
     "Quantum non-QUS bin families",
-    "Uline additional house-brand families beyond Clear Industrial Totes and Clear Plastic Shelf Bins"
+    "Uline additional house-brand families beyond Clear Industrial Totes and Clear Plastic Shelf Bins",
+    "IRIS USA direct-manufacturer breadth",
+    "additional Akro-Mils families beyond Attached Lid, Akro-Grid, Nest & Stack, Straight Wall, and KeepBox"
   ],
   "updated_at": "2026-08-20"
 }
