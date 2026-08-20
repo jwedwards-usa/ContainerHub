@@ -1,13 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {fitForShelf, orientations, searchRecords, toMm} from '../src/catalog.js';
+import {expandCatalogShard, fitForShelf, orientations, searchRecords, toMm} from '../src/catalog.js';
 const records=JSON.parse(fs.readFileSync(new URL('../data/containers.json',import.meta.url),'utf8')).records;
 const byId=id=>records.find(r=>r.id===id);
 
 test('seed contains a useful cross-brand catalog',()=>{
   assert.ok(records.length>=15);
   assert.deepEqual([...new Set(records.map(r=>r.brand))].sort(),['Akro-Mils','IRIS USA','Rubbermaid Commercial','Sterilite']);
+});
+
+test('grouped shards merge family defaults without mutating records',()=>{
+  const shard={groups:[{defaults:{brand:'Example',closure:'open'},records:[{id:'one',model:'1'},{id:'two',model:'2',closure:'lid'}]}]};
+  assert.deepEqual(expandCatalogShard(shard),[
+    {brand:'Example',closure:'open',id:'one',model:'1'},
+    {brand:'Example',closure:'lid',id:'two',model:'2'}
+  ]);
 });
 
 test('base rotation is considered without tipping',()=>{
