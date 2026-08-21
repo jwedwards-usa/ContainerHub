@@ -6,12 +6,14 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 
 ## What works
 - Search across brand, model/SKU, material, closure, category, color, notes, source retailer, and additional seller offers, ranked by weighted text relevance.
-- Filter by brand, lid, transparency and wheels.
+- Filter by brand, lid, transparency, wheels, and common paper/file formats.
+- Switch dimensional search between **outside dimensions** (fit a shelf/cubby) and **inside dimensions** (find the smallest published usable interior that can hold a required width/depth/height).
 - Enter shelf width, depth and height to rank fitting containers by dimensional closeness; near misses stay below true fits unless fit-only is enabled.
+- Flag containers whose published internal geometry fits US Letter, US Legal, A4, or a standard letter hanging-file envelope. Hanging-file flags are dimensional only and do not claim built-in rails.
 - Switch sorting to most per shelf, one-layer footprint use, or A–Z when a different geometric objective matters.
 - See mixed one-layer shelf plans that combine up to three container sizes using physically valid top-down row layouts.
-- Keep sellable products with unpublished external dimensions searchable and purchasable while excluding them from geometric ranking.
-- Rotate containers on their base by default; tipping onto a side is opt-in.
+- Keep sellable products with unpublished external or internal dimensions searchable and purchasable while excluding them only from the geometric mode that needs the missing measurement.
+- Rotate containers on their base by default; tipping onto a side is opt-in. In inside mode the same option permits the required item envelope to rotate onto its side.
 - Count vertical packing layers only when the catalog explicitly marks a product stackable.
 - Toggle imperial and metric display while canonical catalog data stays metric.
 - Compare external dimensions, internal dimensions, capacity and empty weight when published.

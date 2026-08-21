@@ -8,16 +8,34 @@ ContainerHub is a static GitHub Pages catalog with no backend and no required bu
 The reconciliation starts from the coordinated product tree, preserves richer records when branches overlap, and adds only identities absent from that tree. In particular, richer Uline bottle/jug/tank records were retained instead of being replaced by sparse index variants. `research/branch-reconciliation-2026-08-20.md` records the union and duplicate handling.
 
 ## Catalog behavior
-The UI supports weighted free-text search across identity, taxonomy, source/purchase retailer and offers; brand/lid/translucency/wheel filters; imperial/metric conversion; source and purchase links; product-preview dialogs with retained direct buy links; additional seller links; lightweight SVG schematics; and progressive rendering for large result sets.
+The UI supports weighted free-text search across identity, taxonomy, source/purchase retailer and offers; brand/lid/translucency/wheel filters; imperial/metric conversion; source and purchase links; product-preview dialogs with retained direct buy links; additional seller links; lightweight SVG schematics; progressive rendering for large result sets; outside/inside dimensional search; and standard paper/file fit flags derived from published internal dimensions.
 
-Sellable products may have `external_mm: null` when geometry is unpublished. They remain searchable and purchasable but are excluded from shelf-fit calculations. Grouped, compact, index and tabular shards expand to the same runtime record shape.
+Sellable products may have `external_mm: null` or `internal_mm: null` when geometry is unpublished. They remain searchable and purchasable but are excluded only from the geometric mode that needs the missing measurement. Grouped, compact, index and tabular shards expand to the same runtime record shape.
 
 `data/catalog.json` is the authoritative shard manifest. Unknown product facts stay `null`; never infer values from adjacent sizes or related models.
 
-## Geometry/search v2
-Shelf dimensions trigger **closest-size ranking by default**. Every allowed orientation is evaluated against the entered width/depth/height. True fits always sort above near misses, then the best orientation is scored from geometric-mean axis fill, worst-axis fill, average fill and dimensional balance. This prevents tiny containers from winning merely because many copies fit.
+## Geometry/search v3
+Dimensional search has two explicit modes:
 
-Alternative sort modes remain explicit:
+- **Outside dimensions — fit into a space** uses `external_mm`. The entered width/depth/height is the maximum shelf/cubby envelope. True fits sort above near misses and the default score prefers the closest fitting outside geometry.
+- **Inside dimensions — hold an item** uses `internal_mm`. The entered width/depth/height is the minimum usable interior required. The ratios reverse so the smallest qualifying interior ranks highest. Missing interiors never pass fit-only. Shelf-combination planning and `Most per shelf` / `Footprint use` are disabled in this mode.
+
+Every allowed orientation is evaluated. Base rotation is automatic; tipping is opt-in. In inside mode the tipping option means the required item envelope may use a different vertical axis.
+
+The standard-format layer is intentionally conservative and never substitutes external dimensions for missing interiors:
+- US Letter: 215.9 × 279.4 mm.
+- US Legal: 215.9 × 355.6 mm.
+- A4: 210 × 297 mm.
+- Standard letter hanging-file envelope: 12.75 in horizontal rod span and 9.25 in upright folder-body height. This is an envelope-fit badge only; it does not claim the container has rails or file-support hardware.
+
+Paper flags use the internal base footprint with 90° rotation. Clearly round/cylindrical interiors require the paper diagonal to fit the published internal diameter rather than using the circle's bounding box. Standard-fit labels also participate in weighted text search and are available as a dedicated filter.
+
+The hanging-file dimensions are based on a Pendaflex letter hanging folder listing that publishes a 12.75 in rod and 11.75 × 9.25 in folder body. A4 follows ISO 216; US Letter/Legal use the common 8.5 × 11 in / 8.5 × 14 in dimensions.
+
+## Geometry/search v2 foundation
+Outside/shelf dimensions trigger closest-size ranking by default. True fits always sort above near misses, then the best orientation is scored from geometric-mean axis fill, worst-axis fill, average fill and dimensional balance. This prevents tiny containers from winning merely because many copies fit.
+
+Alternative external sort modes remain explicit:
 - `Most per shelf` maximizes safely counted repeated units.
 - `Footprint use` maximizes one-layer floor coverage.
 - `A–Z` removes geometric ranking.
@@ -26,7 +44,7 @@ Vertical layers count only when `stackable === true`. A product with `stackable:
 
 Text search is token-aware and weighted. Exact model/SKU and seller-SKU matches receive the strongest scores, followed by name, brand, category/material, construction and descriptive/source fields. All query tokens must match somewhere, so a query can span fields without becoming a broad substring OR.
 
-Shelf searches also generate up to three **one-layer combination plans**. The planner builds physically valid top-down rows, allows base rotation, mixes up to three product identities, and uses bounded beam search to balance footprint coverage, depth use, height harmony and SKU simplicity. The UI presents each plan as a scaled shelf mosaic with a clickable product legend. The planner never assumes vertical stacking.
+Outside shelf searches also generate up to three **one-layer combination plans**. The planner builds physically valid top-down rows, allows base rotation, mixes up to three product identities, and uses bounded beam search to balance footprint coverage, depth use, height harmony and SKU simplicity. The UI presents each plan as a scaled shelf mosaic with a clickable product legend. The planner never assumes vertical stacking.
 
 Only the first 60 result cards render initially; the full match count stays visible and `Show more` adds cards in 60-item batches.
 
@@ -39,9 +57,9 @@ node --check app.js
 git diff --check
 ```
 
-`tests/geometry.test.mjs` covers closest-fit ranking, pack-sort compatibility, near-miss ordering, exact SKU/model relevance, cross-field token search, conservative non-stackable layer counting, and physical bounds for mixed shelf plans.
+`tests/geometry.test.mjs` covers closest-fit ranking, pack-sort compatibility, near-miss ordering, internal-fit ranking and fit-only behavior, exact SKU/model relevance, cross-field token search, US Letter/Legal/A4 flags, hanging-file envelope flags, round-interior paper geometry, conservative non-stackable layer counting, and physical bounds for mixed shelf plans.
 
-The browser smoke test derives its initial render count from the manifest and verifies progressive rendering, offer search, null-dimension exclusion, seller links, preview navigation, legacy SKU/material/brand search, shelf fit, shelf-plan rendering and unit conversion.
+The browser smoke test derives its initial render count from the manifest and verifies progressive rendering, standard-format filtering, internal-dimension search, offer search, null-dimension exclusion, seller links, preview navigation, legacy SKU/material/brand search, shelf fit, shelf-plan rendering and unit conversion.
 
 A synthetic 10,000-record benchmark on the documented VM measured about 196 ms for the first weighted shelf search, 50 ms after search-index caching, and 94 ms for shelf-plan generation. These are observations, not strict thresholds.
 
@@ -63,14 +81,14 @@ Prefer manufacturer specifications, then established retailers that clearly matc
 
 A second retailer, pack, color-only variant, or accessory configuration using the same physical product belongs in `data/offers.json` rather than becoming a duplicate product.
 
-Do not reject a current sellable SKU solely because physical dimensions are unpublished. Only the fit engine requires positive external dimensions.
+Do not reject a current sellable SKU solely because physical dimensions are unpublished. Geometric modes should degrade independently: outside search requires `external_mm`; inside search and standard-fit badges require `internal_mm`.
 
 Keep source families in separate shard files so future workers can add products without editing the same data file. Reconcile `data/catalog.json` at integration time. If `main` advances, rebuild from the newer tree and retain the stronger/newer duplicate before adding only genuinely new identities.
 
 `research/retailer-coverage.json` remains the source of truth for exhaustive retailer progress.
 
 ## Next useful work
-1. Enrich index-first Uline and Sterilite records with model-specific dimensions and material/capacity/closure facts from canonical pages.
+1. Enrich index-first Uline and Sterilite records with model-specific external **and internal** dimensions and material/capacity/closure facts from canonical pages; inside search benefits directly from interior coverage.
 2. Continue every requested retailer from `research/retailer-coverage.json` until enumeration is actually complete.
 3. Prioritize Walmart, Target, Home Depot and Lowe's because their inventories are broad and change frequently.
 4. Continue H-E-B, Tom Thumb, Safeway, Brookshire's, Hobby Lobby, Michaels, The Container Store and Ace.
