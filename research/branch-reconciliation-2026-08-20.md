@@ -22,7 +22,9 @@ The 69 sparse Uline bottle records in `catalog/final-1000-plus-20260820` were no
 Physical identity remains separate from seller, pack, color-only and accessory configurations; those belong in `data/offers.json`. Unknown source facts remain `null`.
 
 ## Closing branch refresh
-A post-publication refresh increased the visible inventory to 67 refs because concurrent workers surfaced `search-geometry-v2`, `catalog/final-all-branches-reconcile-20260820-staging`, `catalog/final-all-branches-reconcile-20260820`, `catalog/final-union-1076-20260820`, `catalog/final-union-working-20260820`, and the final reconciliation source branch itself. The two `final-union` refs and the final reconciliation source branch were identical to the 1,076-product `main`; the two `final-all-branches` refs and `search-geometry-v2` were behind it. None contained a unique product or code delta.
+A post-publication refresh first increased the visible inventory to 67 refs because concurrent workers surfaced `search-geometry-v2`, `catalog/final-all-branches-reconcile-20260820-staging`, `catalog/final-all-branches-reconcile-20260820`, `catalog/final-union-1076-20260820`, `catalog/final-union-working-20260820`, and the final reconciliation source branch itself. The two `final-union` refs and the final reconciliation source branch were identical to the 1,076-product `main`; the two `final-all-branches` refs and `search-geometry-v2` were behind it. None contained a unique product or code delta.
+
+A final live refresh found 68 refs because `search-geometry-v2-rebased` appeared afterward. Direct comparison against `main` showed that branch is two commits behind with zero files ahead, so it also contains no unique product or code delta. The live 68-ref inventory therefore has no unmerged unique content outside `main` and `gh-pages`.
 
 ## Publication
 `main` is the source of truth. `gh-pages` must be advanced through normal Git history to the exact same final tree. No GitHub Actions or force updates are required.
