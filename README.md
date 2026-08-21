@@ -14,7 +14,7 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 - Compare external dimensions, internal dimensions, capacity and empty weight when published.
 - Open source specifications, product previews, primary purchase pages, and additional retailer offers.
 
-The catalog currently contains **326 verified product records across 46 shards**, plus **12 additional retailer/pack/configuration offers**. It preserves the coordinated Sterilite, IRIS, Akro-Mils, Rubbermaid, Cambro, Quantum, Uline, Really Useful Box, Buckhorn and Brightroom families, including the current Akro-Mils Nest & Stack, Straight Wall and KeepBox waves plus nine additional Target Brightroom storage products spanning latching, frosted, IP67/sealed and wheeled formats.
+The catalog contains **1,076 unique product records across 67 shards**, plus **12 additional retailer/pack/configuration offers**. It reconciles every worker branch surfaced on 2026-08-20, preserving richer source-backed records when branches overlap and retaining sparse index records only for genuinely unique sellable models.
 
 Retailer enumeration is tracked in `research/retailer-coverage.json`; no retailer is marked exhaustive until every in-scope sellable SKU or variant has an explicit outcome.
 
