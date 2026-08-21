@@ -1,6 +1,8 @@
 const INCH_MM = 25.4;
 const LB_G = 453.59237;
 const GAL_ML = 3785.411784;
+const EPSILON = 1e-7;
+const SEARCH_CACHE = new WeakMap();
 
 const UNPUBLISHED_DEFAULTS = {
   model:null, material:null, translucency:null, colors:null, shape:null, handles:null,
@@ -58,79 +60,366 @@ export function orientations(d, allowTipping = false) {
     });
 }
 
+function validShelf(shelf) {
+  return shelf && ['width','depth','height'].every(k => Number.isFinite(shelf[k]) && shelf[k] > 0);
+}
+
+function clamp01(value) {
+  return Math.max(0,Math.min(1,value));
+}
+
+function orientationMatch(o,shelf) {
+  const axisFill={
+    width:o.width/shelf.width,
+    depth:o.length/shelf.depth,
+    height:o.height/shelf.height
+  };
+  const fills=Object.values(axisFill);
+  const fits=fills.every(value=>value<=1+EPSILON);
+  const clearance_mm={
+    width:shelf.width-o.width,
+    depth:shelf.depth-o.length,
+    height:shelf.height-o.height
+  };
+  const oversize_mm={
+    width:Math.max(0,-clearance_mm.width),
+    depth:Math.max(0,-clearance_mm.depth),
+    height:Math.max(0,-clearance_mm.height)
+  };
+  const mean=fills.reduce((sum,value)=>sum+Math.min(value,1),0)/3;
+  const volumeFill=fills.reduce((product,value)=>product*Math.min(value,1),1);
+  const geometricFill=Math.cbrt(volumeFill);
+  const minFill=Math.min(...fills.map(value=>Math.min(value,1)));
+  const spread=Math.max(...fills.map(value=>Math.min(value,1)))-minFill;
+  const balance=clamp01(1-spread);
+  let sizeScore;
+  if (fits) {
+    sizeScore=100*(0.52*geometricFill+0.23*minFill+0.17*mean+0.08*balance);
+  } else {
+    const excess=[
+      oversize_mm.width/shelf.width,
+      oversize_mm.depth/shelf.depth,
+      oversize_mm.height/shelf.height
+    ];
+    const rms=Math.sqrt(excess.reduce((sum,value)=>sum+value*value,0)/3);
+    sizeScore=Math.max(0,48-140*rms);
+  }
+  return {fits,sizeScore,axisFill,volumeFill,clearance_mm,oversize_mm,orientation:o};
+}
+
+function betterClosest(a,b) {
+  if (!a) return b;
+  if (a.fits!==b.fits) return b.fits?b:a;
+  if (b.sizeScore!==a.sizeScore) return b.sizeScore>a.sizeScore?b:a;
+  const aGap=Object.values(a.fits?a.clearance_mm:a.oversize_mm).reduce((s,v)=>s+Math.max(0,v),0);
+  const bGap=Object.values(b.fits?b.clearance_mm:b.oversize_mm).reduce((s,v)=>s+Math.max(0,v),0);
+  return bGap<aGap?b:a;
+}
+
 export function fitForShelf(record, shelf, allowTipping = false) {
-  if (!record?.external_mm || !shelf || !['width','depth','height'].every(k => Number.isFinite(shelf[k]) && shelf[k] > 0)) {
-    return null;
-  }
-  let best = null;
+  if (!record?.external_mm || !validShelf(shelf)) return null;
+  let packing = null;
+  let closest = null;
   for (const o of orientations(record.external_mm, allowTipping)) {
-    const across = Math.floor(shelf.width / o.width);
-    const deep = Math.floor(shelf.depth / o.length);
-    const high = Math.floor(shelf.height / o.height);
-    const count = across * deep * high;
-    const usedVolume = count * o.length * o.width * o.height;
-    const shelfVolume = shelf.width * shelf.depth * shelf.height;
-    const utilization = shelfVolume ? usedVolume / shelfVolume : 0;
-    const result = {count, across, deep, high, utilization, orientation:o};
-    if (!best || count > best.count || (count === best.count && utilization > best.utilization)) best = result;
+    const across=Math.floor((shelf.width+EPSILON)/o.width);
+    const deep=Math.floor((shelf.depth+EPSILON)/o.length);
+    const geometricHigh=Math.floor((shelf.height+EPSILON)/o.height);
+    const floorCount=across*deep;
+    const high=record.stackable===true?geometricHigh:Math.min(1,geometricHigh);
+    const count=floorCount*high;
+    const usedVolume=count*o.length*o.width*o.height;
+    const shelfVolume=shelf.width*shelf.depth*shelf.height;
+    const utilization=shelfVolume?usedVolume/shelfVolume:0;
+    const shelfArea=shelf.width*shelf.depth;
+    const footprintUtilization=shelfArea?floorCount*o.length*o.width/shelfArea:0;
+    const result={count,across,deep,high,geometricHigh,floorCount,utilization,footprintUtilization,orientation:o};
+    if (!packing || count>packing.count || (count===packing.count && utilization>packing.utilization)) packing=result;
+    closest=betterClosest(closest,orientationMatch(o,shelf));
   }
-  return best;
+  return {
+    ...packing,
+    fits:Boolean(closest?.fits),
+    sizeScore:closest?.sizeScore||0,
+    axisFill:closest?.axisFill||null,
+    clearance_mm:closest?.clearance_mm||null,
+    oversize_mm:closest?.oversize_mm||null,
+    closestOrientation:closest?.orientation||null,
+    singleVolumeFill:closest?.volumeFill||0,
+    stacking:record.stackable===true?'verified':record.stackable===false?'not-stackable':'unknown'
+  };
 }
 
 function offerTerms(record) {
   return (record.offers || []).flatMap(offer => [offer.retailer, offer.retailer_sku, offer.seller_model, offer.channel]).filter(Boolean);
 }
 
-export function searchRecords(records, filters = {}) {
-  const q = (filters.query || '').trim().toLowerCase();
-  const brands = new Set(filters.brands || []);
-  const closures = new Set(filters.closures || []);
-  const shelf = filters.shelf || null;
-  const fitOnly = Boolean(filters.fitOnly && shelf);
-  const allowTipping = Boolean(filters.allowTipping);
+function normalizeSearch(value) {
+  return String(value??'').normalize('NFKD').toLowerCase()
+    .replace(/[×✕]/g,' x ')
+    .replace(/\bquarts?\b/g,' qt ')
+    .replace(/\bgallons?\b/g,' gal ')
+    .replace(/\binches?\b/g,' in ')
+    .replace(/\bmillimeters?\b/g,' mm ')
+    .replace(/[^a-z0-9.]+/g,' ')
+    .trim().replace(/\s+/g,' ');
+}
 
-  return records.map(record => ({record, fit: fitForShelf(record, shelf, allowTipping)}))
-    .filter(({record, fit}) => {
-      const haystack = [record.brand, record.name, record.model, record.category, record.material,
-        record.translucency, record.shape, record.handles, record.closure, record.wall_style,
-        record.source_site, record.purchase_site, ...(record.colors || []), ...(record.notes || []), ...offerTerms(record)]
-        .filter(Boolean).join(' ').toLowerCase();
-      if (q && !haystack.includes(q)) return false;
-      if (brands.size && !brands.has(record.brand)) return false;
-      if (closures.size && ![...closures].some(c => record.closure?.includes(c))) return false;
-      if (filters.lidded === true && record.closure?.startsWith('open')) return false;
-      if (filters.transparent === true && record.translucency !== 'transparent') return false;
-      if (filters.wheels === true && record.wheels !== true) return false;
-      if (fitOnly && (!fit || fit.count < 1)) return false;
+function searchableFields(record) {
+  const offers=record.offers||[];
+  return [
+    [record.model,6],[...offers.map(o=>o.retailer_sku),6],[...offers.map(o=>o.seller_model),6],
+    [record.name,5],[record.brand,4],[record.category,3.5],[record.material,3],
+    [record.closure,2.6],[record.shape,2.4],[record.handles,2],[record.wall_style,2],
+    [record.source_site,1.8],[record.purchase_site,1.8],[...offers.map(o=>o.retailer),2.2],
+    [...offers.map(o=>o.channel),1.5],[...(record.colors||[]),1.8],[...(record.notes||[]),1]
+  ].flatMap(([value,weight])=>Array.isArray(value)?value.map(v=>[v,weight]):[[value,weight]])
+    .filter(([value])=>value!=null && value!=='');
+}
+
+function searchIndex(record) {
+  if (SEARCH_CACHE.has(record)) return SEARCH_CACHE.get(record);
+  const fields=searchableFields(record).map(([value,weight])=>{
+    const text=normalizeSearch(value);
+    return {text,words:text.split(' '),weight};
+  });
+  const index={fields,haystack:fields.map(field=>field.text).join(' ')};
+  SEARCH_CACHE.set(record,index);
+  return index;
+}
+
+function tokenFieldScore(token,field) {
+  if (!field.text) return 0;
+  if (field.text===token) return 120*field.weight;
+  if (field.words.includes(token)) return 80*field.weight;
+  if (field.words.some(word=>word.startsWith(token))) return 45*field.weight;
+  if (field.text.includes(token)) return 24*field.weight;
+  return 0;
+}
+
+export function scoreSearchRecord(record, query) {
+  const normalized=normalizeSearch(query);
+  if (!normalized) return 0;
+  const tokens=normalized.split(' ').filter(Boolean);
+  const index=searchIndex(record);
+  let score=0;
+  for (const token of tokens) {
+    let best=0;
+    for (const field of index.fields) best=Math.max(best,tokenFieldScore(token,field));
+    if (!best) return -1;
+    score+=best;
+  }
+  if (index.fields.some(field=>field.text===normalized)) score+=500;
+  else if (index.fields.some(field=>field.text.startsWith(normalized))) score+=180;
+  else if (index.haystack.includes(normalized)) score+=60;
+  return score;
+}
+
+function nameOrder(a,b) {
+  return `${a.record.brand||''} ${a.record.name||''}`.localeCompare(`${b.record.brand||''} ${b.record.name||''}`);
+}
+
+export function searchRecords(records, filters = {}) {
+  const q=(filters.query||'').trim();
+  const brands=new Set(filters.brands||[]);
+  const closures=new Set(filters.closures||[]);
+  const shelf=filters.shelf||null;
+  const fitOnly=Boolean(filters.fitOnly&&shelf);
+  const allowTipping=Boolean(filters.allowTipping);
+  const sortMode=filters.sort||'best';
+
+  return records.map(record=>({record,fit:fitForShelf(record,shelf,allowTipping),relevance:scoreSearchRecord(record,q)}))
+    .filter(({record,fit,relevance})=>{
+      if (q&&relevance<0) return false;
+      if (brands.size&&!brands.has(record.brand)) return false;
+      if (closures.size&&![...closures].some(c=>record.closure?.includes(c))) return false;
+      if (filters.lidded===true&&record.closure?.startsWith('open')) return false;
+      if (filters.transparent===true&&record.translucency!=='transparent') return false;
+      if (filters.wheels===true&&record.wheels!==true) return false;
+      if (fitOnly&&(!fit||!fit.fits)) return false;
       return true;
     })
-    .sort((a,b) => {
+    .sort((a,b)=>{
+      if (sortMode==='name') return nameOrder(a,b);
       if (shelf) {
-        const ac = a.fit?.count || 0, bc = b.fit?.count || 0;
-        if (bc !== ac) return bc - ac;
-        const au = a.fit?.utilization || 0, bu = b.fit?.utilization || 0;
-        if (bu !== au) return bu - au;
+        const af=Boolean(a.fit?.fits),bf=Boolean(b.fit?.fits);
+        if (af!==bf) return bf-af;
+        if (sortMode==='pack') {
+          const count=(b.fit?.count||0)-(a.fit?.count||0);
+          if (count) return count;
+          const util=(b.fit?.utilization||0)-(a.fit?.utilization||0);
+          if (util) return util;
+        } else if (sortMode==='space') {
+          const util=(b.fit?.footprintUtilization||0)-(a.fit?.footprintUtilization||0);
+          if (util) return util;
+          const score=(b.fit?.sizeScore||0)-(a.fit?.sizeScore||0);
+          if (score) return score;
+        } else {
+          const score=(b.fit?.sizeScore||0)-(a.fit?.sizeScore||0);
+          if (score) return score;
+          const util=(b.fit?.footprintUtilization||0)-(a.fit?.footprintUtilization||0);
+          if (util) return util;
+        }
+        if (q&&b.relevance!==a.relevance) return b.relevance-a.relevance;
+        return nameOrder(a,b);
       }
-      return `${a.record.brand} ${a.record.name}`.localeCompare(`${b.record.brand} ${b.record.name}`);
+      if (q&&b.relevance!==a.relevance) return b.relevance-a.relevance;
+      return nameOrder(a,b);
     });
+}
+
+function shelfModules(records,shelf,allowTipping=false,maxModules=72) {
+  const raw=[];
+  for (const record of records) {
+    if (!record?.external_mm) continue;
+    for (const o of orientations(record.external_mm,allowTipping)) {
+      if (o.height>shelf.height+EPSILON||o.width>shelf.width+EPSILON||o.length>shelf.depth+EPSILON) continue;
+      const across=Math.floor((shelf.width+EPSILON)/o.width);
+      if (!across) continue;
+      const rowArea=across*o.width*o.length;
+      const rowFill=across*o.width/shelf.width;
+      raw.push({record,orientation:o,across,depth:o.length,rowArea,rowFill,height:o.height});
+    }
+  }
+  const buckets=new Map();
+  for (const module of raw) {
+    const bucket=Math.min(11,Math.floor(module.depth/shelf.depth*12));
+    const list=buckets.get(bucket)||[];
+    list.push(module);
+    list.sort((a,b)=>(b.rowFill-a.rowFill)||((b.depth/shelf.depth)-(a.depth/shelf.depth)));
+    buckets.set(bucket,list.slice(0,8));
+  }
+  return [...buckets.values()].flat().sort((a,b)=>(b.rowFill-a.rowFill)||b.rowArea-a.rowArea).slice(0,maxModules);
+}
+
+function heightHarmony(rows,shelfHeight) {
+  if (!rows.length) return 0;
+  const heights=rows.map(row=>row.height);
+  return clamp01(1-(Math.max(...heights)-Math.min(...heights))/shelfHeight);
+}
+
+function stateValue(state,shelf,preferMixed=false) {
+  const skuCount=state.skuIds.length;
+  const utilization=state.area/(shelf.width*shelf.depth);
+  const depthFill=state.usedDepth/shelf.depth;
+  const harmony=heightHarmony(state.rows,shelf.height);
+  const simplicity=skuCount<=1?1:skuCount===2?.7:.45;
+  const mixBonus=preferMixed?(skuCount===2?.055:skuCount===3?.04:-.06):0;
+  return utilization*.72+depthFill*.12+harmony*.07+simplicity*.09+mixBonus;
+}
+
+function pushBeam(bucket,state,shelf,beamWidth,preferMixed) {
+  const signature=`${state.skuIds.slice().sort().join('|')}::${state.rows.slice(-2).map(row=>`${row.record.id}:${Math.round(row.orientation.width)}:${Math.round(row.orientation.length)}`).join('|')}`;
+  const existing=bucket.findIndex(candidate=>candidate.signature===signature);
+  const wrapped={...state,signature,beamScore:stateValue(state,shelf,preferMixed)};
+  if (existing>=0) {
+    if (wrapped.beamScore>bucket[existing].beamScore) bucket[existing]=wrapped;
+  } else bucket.push(wrapped);
+  bucket.sort((a,b)=>b.beamScore-a.beamScore);
+  if (bucket.length>beamWidth) bucket.length=beamWidth;
+}
+
+function beamLayout(modules,shelf,{maxSkus=3,preferMixed=false,requireMixed=false,beamWidth=14}={}) {
+  if (!modules.length) return null;
+  const step=Math.max(5,Math.ceil(shelf.depth/260));
+  const maxUnits=Math.ceil(shelf.depth/step);
+  const buckets=Array.from({length:maxUnits+1},()=>[]);
+  buckets[0].push({usedDepth:0,usedUnits:0,area:0,rows:[],skuIds:[],signature:'',beamScore:0});
+  const finished=[];
+  for (let unit=0;unit<=maxUnits;unit++) {
+    for (const state of buckets[unit]) {
+      if (state.rows.length) finished.push(state);
+      for (const module of modules) {
+        const nextDepth=state.usedDepth+module.depth;
+        if (nextDepth>shelf.depth+EPSILON) continue;
+        const skuIds=state.skuIds.includes(module.record.id)?state.skuIds:[...state.skuIds,module.record.id];
+        if (skuIds.length>maxSkus) continue;
+        const moduleUnits=Math.max(1,Math.ceil(module.depth/step));
+        const nextUnits=state.usedUnits+moduleUnits;
+        if (nextUnits>maxUnits) continue;
+        pushBeam(buckets[nextUnits],{
+          usedDepth:nextDepth,usedUnits:nextUnits,area:state.area+module.rowArea,
+          rows:[...state.rows,module],skuIds
+        },shelf,beamWidth,preferMixed);
+      }
+    }
+  }
+  const candidates=finished.filter(state=>!requireMixed||state.skuIds.length>=2);
+  candidates.sort((a,b)=>stateValue(b,shelf,preferMixed)-stateValue(a,shelf,preferMixed));
+  return candidates[0]||null;
+}
+
+function repeatedLayout(modules,shelf) {
+  let best=null;
+  for (const module of modules) {
+    const rows=Math.floor((shelf.depth+EPSILON)/module.depth);
+    if (!rows) continue;
+    const state={usedDepth:rows*module.depth,area:rows*module.rowArea,rows:Array.from({length:rows},()=>module),skuIds:[module.record.id]};
+    if (!best||stateValue(state,shelf,false)>stateValue(best,shelf,false)) best=state;
+  }
+  return best;
+}
+
+function materializePlan(state,shelf,title) {
+  if (!state) return null;
+  let y=0;
+  const placements=[];
+  const counts=new Map();
+  const records=new Map();
+  for (const row of state.rows) {
+    records.set(row.record.id,row.record);
+    for (let i=0;i<row.across;i++) {
+      placements.push({productId:row.record.id,x:i*row.orientation.width,y,width:row.orientation.width,depth:row.orientation.length});
+      counts.set(row.record.id,(counts.get(row.record.id)||0)+1);
+    }
+    y+=row.depth;
+  }
+  const products=[...counts.entries()].map(([id,count])=>({record:records.get(id),count}));
+  const utilization=state.area/(shelf.width*shelf.depth);
+  return {
+    title,utilization,usedDepth:state.usedDepth,remainingDepth:Math.max(0,shelf.depth-state.usedDepth),
+    totalCount:placements.length,skuCount:products.length,products,placements,
+    heightHarmony:heightHarmony(state.rows,shelf.height)
+  };
+}
+
+function planSignature(plan) {
+  return plan.products.map(item=>`${item.record.id}:${item.count}`).sort().join('|')+`@${Math.round(plan.usedDepth)}`;
+}
+
+export function buildShelfLayouts(records,shelf,options={}) {
+  if (!validShelf(shelf)) return [];
+  const modules=shelfModules(records,shelf,Boolean(options.allowTipping),options.maxModules||72);
+  if (!modules.length) return [];
+  const plans=[
+    materializePlan(beamLayout(modules,shelf,{maxSkus:3,beamWidth:14}),shelf,'Best coverage'),
+    materializePlan(beamLayout(modules,shelf,{maxSkus:3,preferMixed:true,requireMixed:true,beamWidth:18}),shelf,'Balanced mix'),
+    materializePlan(repeatedLayout(modules,shelf),shelf,'Simple repeat')
+  ].filter(Boolean);
+  const seen=new Set();
+  return plans.filter(plan=>{
+    const key=planSignature(plan);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0,options.maxPlans||3);
 }
 
 export function toMm(value, unit) {
   if (!Number.isFinite(value)) return null;
-  return unit === 'imperial' ? value * INCH_MM : value;
+  return unit==='imperial'?value*INCH_MM:value;
 }
 
 export function lengthLabel(mm, unit, digits=1) {
-  if (mm == null) return 'unknown';
-  return unit === 'imperial' ? `${(mm / INCH_MM).toFixed(digits)} in` : `${Math.round(mm)} mm`;
+  if (mm==null) return 'unknown';
+  return unit==='imperial'?`${(mm/INCH_MM).toFixed(digits)} in`:`${Math.round(mm)} mm`;
 }
 
 export function weightLabel(g, unit) {
-  if (g == null) return 'unknown';
-  return unit === 'imperial' ? `${(g / LB_G).toFixed(2)} lb` : `${(g / 1000).toFixed(2)} kg`;
+  if (g==null) return 'unknown';
+  return unit==='imperial'?`${(g/LB_G).toFixed(2)} lb`:`${(g/1000).toFixed(2)} kg`;
 }
 
 export function capacityLabel(ml, unit) {
-  if (ml == null) return 'unknown';
-  return unit === 'imperial' ? `${(ml / GAL_ML).toFixed(1)} gal` : `${(ml / 1000).toFixed(1)} L`;
+  if (ml==null) return 'unknown';
+  return unit==='imperial'?`${(ml/GAL_ML).toFixed(1)} gal`:`${(ml/1000).toFixed(1)} L`;
 }

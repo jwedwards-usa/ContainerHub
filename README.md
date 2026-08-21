@@ -5,16 +5,20 @@ A static, source-backed catalog for comparing plastic containers by real dimensi
 **Live site:** https://jwedwards-usa.github.io/ContainerHub/
 
 ## What works
-- Search across brand, model/SKU, material, closure, category, color, notes, source retailer, and additional seller offers.
+- Search across brand, model/SKU, material, closure, category, color, notes, source retailer, and additional seller offers, ranked by weighted text relevance.
 - Filter by brand, lid, transparency and wheels.
-- Enter shelf width, depth and height to rank containers by how many identical units fit.
-- Keep sellable products with unpublished external dimensions searchable and purchasable while excluding them from fit ranking.
+- Enter shelf width, depth and height to rank fitting containers by dimensional closeness; near misses are kept below true fits unless fit-only is enabled.
+- Switch sorting to most per shelf, one-layer footprint use, or A–Z when a different geometric objective matters.
+- See mixed one-layer shelf plans that combine up to three container sizes using physically valid top-down row layouts.
+- Keep sellable products with unpublished external dimensions searchable and purchasable while excluding them from geometric ranking.
 - Rotate containers on their base by default; tipping onto a side is opt-in.
+- Count vertical packing layers only when the catalog explicitly marks a product stackable.
 - Toggle imperial and metric display while canonical catalog data stays metric.
 - Compare external dimensions, internal dimensions, capacity and empty weight when published.
 - Open source specifications, product previews, primary purchase pages, and additional retailer offers.
+- Render large result sets progressively instead of creating every product card at once.
 
-The catalog currently contains **326 verified product records across 46 shards**, plus **12 additional retailer/pack/configuration offers**. It preserves the coordinated Sterilite, IRIS, Akro-Mils, Rubbermaid, Cambro, Quantum, Uline, Really Useful Box, Buckhorn and Brightroom families, including the current Akro-Mils Nest & Stack, Straight Wall and KeepBox waves plus nine additional Target Brightroom storage products spanning latching, frosted, IP67/sealed and wheeled formats.
+The catalog is split across many independently sourced shards so parallel research can keep expanding it without turning one JSON file into a merge bottleneck. Run `npm run validate` for the current record, shard, and offer counts.
 
 Retailer enumeration is tracked in `research/retailer-coverage.json`; no retailer is marked exhaustive until every in-scope sellable SKU or variant has an explicit outcome.
 

@@ -3,7 +3,7 @@
 Last updated: 2026-08-20
 
 ## Current state
-ContainerHub is a static GitHub Pages catalog with no backend and no required build step. The coordinated catalog contains **326 source-backed product records across 46 product shards**, plus **12 retailer/pack/configuration offers** in `data/offers.json`.
+ContainerHub is a static GitHub Pages catalog with no backend and no required build step. The coordinated catalog is split across many product shards plus retailer/pack/configuration offers in `data/offers.json`. Do not hard-code a record count in handoff text; run `npm run validate` for the current counts because parallel mining changes them frequently.
 
 The all-worker reconciliation preserves the manufacturer/industrial waves, retailer breadth waves, five recovered Really Useful Box sizes, the Uline shelf-bin recovery, the full standard Cambro FreshPro CamRound family, the Akro-Grid recovery, the complete current Akro-Mils Nest & Stack Tote family, all 12 current Akro-Mils Straight Wall configurations, both current KeepBox sizes, and nine additional Brightroom products from Target wave 3.
 
@@ -16,11 +16,27 @@ The Straight Wall wave covers models 37208, 37278, 37288, 37608, 37612, 37616, 3
 Reconciled retailer additions cover The Container Store, Ace, Lowe's, Target, Home Depot, Tom Thumb and Safeway. Product identity and seller identity are separate: duplicate retailer listings and pack/color/configuration offers belong in `data/offers.json`.
 
 ## Catalog behavior
-The UI supports free-text search across identity, taxonomy, source/purchase retailer and offers; brand/lid/translucency/wheel filters; imperial/metric conversion; shelf fit and orientation handling; ranked fit counts; source and purchase links; product-preview dialogs with retained direct buy links; additional seller links; and lightweight SVG schematics.
+The UI supports weighted free-text search across identity, taxonomy, source/purchase retailer and offers; brand/lid/translucency/wheel filters; imperial/metric conversion; source and purchase links; product-preview dialogs with retained direct buy links; additional seller links; lightweight SVG schematics; and progressive rendering for large result sets.
+
+### Geometry/search v2
+Shelf dimensions now trigger **closest-size ranking by default**. Every base orientation is evaluated against the entered width/depth/height. True fits always sort above near misses, then the best orientation is scored from geometric-mean axis fill, worst-axis fill, average fill and dimensional balance. This prevents tiny bins from winning simply because many copies fit.
+
+Alternative sort modes remain explicit:
+- `Most per shelf` maximizes safely counted repeated units.
+- `Footprint use` maximizes one-layer floor coverage.
+- `A–Z` removes geometric ranking.
+
+Vertical layers count only when `stackable === true`. A product with `stackable: false` or `stackable: null` contributes one layer to the packed count. The fit object still records the purely geometric possible layer count separately for diagnostics.
+
+Text search is token-aware and weighted. Exact model/SKU and seller-SKU matches receive the strongest scores, followed by name, brand, category/material, construction and descriptive/source fields. All query tokens must match somewhere, so queries such as `Sterilite HDPE` can match across separate fields without devolving to a broad substring OR.
+
+Shelf searches also generate up to three **one-layer combination plans**. The planner builds physically valid top-down rows, allows base rotation, mixes up to three product identities, and uses bounded beam search to balance footprint coverage, depth use, height harmony and SKU simplicity. The UI shows each plan as a scaled shelf mosaic with a clickable legend. It never assumes vertical stacking.
+
+Only the first 60 result cards are rendered initially; the full match count remains visible and `Show more` adds cards in 60-item batches. This is important now that catalog breadth is much larger than the original seed.
 
 Sellable products may have `external_mm: null` when geometry is unpublished. They remain searchable and purchasable but are excluded from shelf-fit calculations.
 
-`data/catalog.json` lists 46 product shards. Unknown product facts stay `null`; never infer values from adjacent sizes.
+`data/catalog.json` is the authoritative shard manifest. Unknown product facts stay `null`; never infer values from adjacent sizes.
 
 ## Verification
 Run from the repository root:
@@ -31,12 +47,11 @@ node --check app.js
 git diff --check
 ```
 
-Expected validator result:
-```text
-catalog valid: 326 records, 326 unique ids across 46 shards, 12 retailer offers
-```
+`tests/geometry.test.mjs` covers closest-fit ranking, pack-sort compatibility, near-miss ordering, exact SKU/model relevance, cross-field token search, conservative non-stackable layer counting, and physical bounds for mixed shelf plans.
 
-The browser smoke test derives its initial render count from the manifest and verifies offer search, null-dimension fit exclusion, retailer link rendering, preview navigation, legacy SKU/material/brand search, shelf fit and unit conversion.
+The browser smoke test derives its initial render count from the manifest and verifies offer search, null-dimension fit exclusion, retailer link rendering, preview navigation, legacy SKU/material/brand search, shelf fit and unit conversion. Keep it compatible with progressive card rendering and the shelf-plan panel.
+
+A synthetic 10,000-record benchmark on the documented VM measured about 196 ms for the first weighted shelf search, 50 ms after search-index caching, and 94 ms for shelf-plan generation. These are observations, not strict thresholds.
 
 The VM cannot reliably resolve `github.com`, so publication and branch verification use the connected GitHub API rather than GitHub Actions or a normal `git push`.
 
@@ -60,6 +75,7 @@ Keep source families in separate shard files so parallel workers can add product
 6. Finish Container Store and Ace remaining tote/bin/box families.
 7. Continue Buckhorn modular nesting/bulk, Cambro FreshPro pails/other food-storage families, Quantum non-QUS, Uline families beyond Clear Industrial/Clear Shelf Bins, IRIS direct-manufacturer breadth, and additional Akro-Mils families beyond Attached Lid/Akro-Grid/Nest & Stack/Straight Wall/KeepBox.
 8. Add stale-record refresh tooling and field-level provenance as catalog size grows.
+9. If shelf planning becomes a major workflow, add user-selectable planning objectives (fewest SKUs vs maximum coverage) without changing the deterministic geometry primitives.
 
 ## Deployment
 There are no GitHub Actions credits available. The site is raw static content. Keep `main` as source of truth and advance `gh-pages` through normal Git history to the same verified static tree; never force shared refs.
