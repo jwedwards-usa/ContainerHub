@@ -33,7 +33,8 @@ main{max-width:1380px;margin:auto;padding:1.25rem clamp(1rem,3vw,2rem) 3rem}
 .fit-box{display:grid;grid-template-columns:repeat(3,minmax(110px,1fr)) auto auto;gap:.7rem;align-items:end;border:0;padding:1rem 0 .25rem;margin:0}
 .fit-box legend{font-weight:780;padding:0}
 .fit-help{grid-column:1/-1;margin:-.2rem 0 .1rem;color:var(--muted);font-size:.82rem}
-.fit-box label>input[type=number]{display:block;width:100%;margin-top:.3rem;padding:.58rem;border:1px solid #c7cfcb;border-radius:.48rem}
+.fit-mode{grid-column:1/-1;max-width:31rem}
+.fit-box label>input[type=number],.fit-mode select{display:block;width:100%;margin-top:.3rem;padding:.58rem;border:1px solid #c7cfcb;border-radius:.48rem;background:#fff}
 .check{display:flex;gap:.42rem;align-items:center;font-size:.88rem}
 .filter-row{display:flex;flex-wrap:wrap;gap:.8rem 1.2rem;align-items:end;padding-top:.75rem;border-top:1px solid #e5e9e7}
 .filter-row select,.sort-control select{display:block;margin-top:.3rem;padding:.5rem .65rem;border:1px solid #c7cfcb;border-radius:.45rem;background:#fff;min-width:10rem}
@@ -69,6 +70,7 @@ main{max-width:1380px;margin:auto;padding:1.25rem clamp(1rem,3vw,2rem) 3rem}
 .card h2{font-size:1rem;line-height:1.25;margin:.18rem 0 .5rem}
 .chips{display:flex;gap:.32rem;flex-wrap:wrap;margin-bottom:.55rem}
 .chip{display:inline-block;border-radius:999px;background:#eef3f0;padding:.18rem .42rem;font-size:.7rem;color:#3b4a44}
+.standard-chip{background:#e9f4ed;border:1px solid #bfd6c8;color:#205b43;font-weight:680}
 .specs{display:grid;grid-template-columns:max-content 1fr;gap:.18rem .5rem;margin:.45rem 0;font-size:.79rem}
 .specs dt{color:#68716e}.specs dd{margin:0;min-width:0}
 .fit-result{margin:.55rem 0;padding:.5rem .58rem;border-radius:.45rem;background:#f0f4f2;font-size:.78rem}
@@ -91,4 +93,4 @@ dialog::backdrop{background:#0008}
 .preview-shell{height:100%;display:flex;flex-direction:column;min-height:0}.dialog-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1rem;border-bottom:1px solid #e3e8e5}.dialog-head strong{display:block;font-size:1.1rem;line-height:1.25;margin-top:.15rem}.preview-layout{display:grid;grid-template-columns:minmax(180px,240px) minmax(0,1fr);flex:1;min-height:0;overflow:auto}.preview-image-wrap{display:flex;align-items:flex-start;justify-content:center;background:#edf1ef;padding:1rem}.preview-image{width:100%;max-height:320px;object-fit:contain}.preview-body{padding:1rem;min-width:0}.preview-specs{font-size:.9rem}.preview-body details{font-size:.85rem;margin-top:.75rem}.preview-actions{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;margin-top:.7rem}.preview-actions .seller-links{width:100%}
 @media(max-width:980px){.plan-grid{grid-template-columns:1fr 1fr}.fit-box{grid-template-columns:repeat(3,1fr)}.fit-box .check{grid-column:span 3}}
 @media(max-width:720px){.plan-grid{grid-template-columns:1fr}.catalog-head{align-items:flex-start}.card{grid-template-columns:90px 1fr}.sort-control select{min-width:8rem}}
-@media(max-width:520px){.fit-box{grid-template-columns:1fr}.fit-box .check{grid-column:auto}.catalog-head{display:block}.sort-control{display:block;margin-top:.7rem}.sort-control select{width:100%}.results{grid-template-columns:1fr}.card{grid-template-columns:78px 1fr}.actions{align-items:flex-start;flex-direction:column}.shelf-ideas{padding:.8rem}dialog{width:calc(100vw - 1rem);height:calc(100vh - 1rem);margin:auto}.preview-layout{grid-template-columns:1fr}.preview-image-wrap{min-height:180px}.preview-image{max-height:220px}.preview-actions{align-items:flex-start;flex-direction:column}}
+@media(max-width:520px){.fit-box{grid-template-columns:1fr}.fit-box .check{grid-column:auto}.fit-mode{grid-column:auto;max-width:none}.catalog-head{display:block}.sort-control{display:block;margin-top:.7rem}.sort-control select{width:100%}.results{grid-template-columns:1fr}.card{grid-template-columns:78px 1fr}.actions{align-items:flex-start;flex-direction:column}.shelf-ideas{padding:.8rem}dialog{width:calc(100vw - 1rem);height:calc(100vh - 1rem);margin:auto}.preview-layout{grid-template-columns:1fr}.preview-image-wrap{min-height:180px}.preview-image{max-height:220px}.preview-actions{align-items:flex-start;flex-direction:column}}

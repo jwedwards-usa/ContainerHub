@@ -24,17 +24,30 @@
       </label>
 
       <fieldset class="fit-box">
-        <legend>Fit a shelf or space</legend>
-        <p class="fit-help">Enter the clear inside dimensions. Results automatically rank by the closest container that actually fits.</p>
+        <legend id="dimensionLegend">Fit a shelf or space</legend>
+        <p id="fitHelp" class="fit-help">Enter the clear shelf/cubby dimensions. Results rank by the closest outside size that actually fits.</p>
+        <label class="fit-mode"><span>Dimension mode</span>
+          <select id="dimensionMode">
+            <option value="external">Outside dimensions — fit into a space</option>
+            <option value="internal">Inside dimensions — hold an item</option>
+          </select>
+        </label>
         <label><span>Width <small id="widthUnit">in</small></span><input id="shelfWidth" inputmode="decimal" type="number" min="0" step="0.01" placeholder="36"></label>
         <label><span>Depth <small id="depthUnit">in</small></span><input id="shelfDepth" inputmode="decimal" type="number" min="0" step="0.01" placeholder="24"></label>
         <label><span>Height <small id="heightUnit">in</small></span><input id="shelfHeight" inputmode="decimal" type="number" min="0" step="0.01" placeholder="18"></label>
-        <label class="check"><input id="fitOnly" type="checkbox"> Only containers that fit</label>
-        <label class="check"><input id="allowTipping" type="checkbox"> Allow containers on their side</label>
+        <label class="check"><input id="fitOnly" type="checkbox"> <span id="fitOnlyText">Only containers that fit</span></label>
+        <label class="check"><input id="allowTipping" type="checkbox"> <span id="allowTippingText">Allow containers on their side</span></label>
       </fieldset>
 
       <div class="filter-row">
         <label>Brand<select id="brandFilter"><option value="">All brands</option></select></label>
+        <label>Fits standard<select id="standardFilter">
+          <option value="">Any format</option>
+          <option value="us-letter">US Letter paper</option>
+          <option value="us-legal">US Legal paper</option>
+          <option value="a4">A4 paper</option>
+          <option value="letter-hanging">Letter hanging file</option>
+        </select></label>
         <label class="check"><input id="lidded" type="checkbox"> Has lid</label>
         <label class="check"><input id="transparent" type="checkbox"> Transparent</label>
         <label class="check"><input id="wheels" type="checkbox"> Wheeled</label>
