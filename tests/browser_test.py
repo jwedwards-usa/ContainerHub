@@ -42,9 +42,24 @@ def main():
         if expected_count>60:
             assert page.locator('#showMore').is_visible()
 
+        page.locator('#standardFilter').select_option('us-letter')
+        assert int(page.locator('#resultCount').inner_text())>=1
+        assert page.locator('.standard-chip',has_text='US Letter').count()>=1
+        page.locator('#clear').click()
+
+        page.locator('#query').fill('2186')
+        page.locator('#dimensionMode').select_option('internal')
+        page.locator('#shelfWidth').fill('13'); page.locator('#shelfDepth').fill('16'); page.locator('#shelfHeight').fill('14')
+        page.locator('#fitOnly').check()
+        assert int(page.locator('#resultCount').inner_text())>=1
+        assert 'Holds target' in page.locator('.card .fit-result').first.inner_text()
+        assert page.locator('#shelfIdeas').is_hidden()
+        assert 'enough inside space' in page.locator('#fitOnlyText').inner_text()
+        page.locator('#clear').click()
+
         page.locator('#query').fill('Safeway')
         assert int(page.locator('#resultCount').inner_text())>=1
-        assert page.locator('.fit-result',has_text='Dimensions unavailable').count()>=1
+        assert page.locator('.fit-result',has_text='External dimensions unavailable').count()>=1
         page.locator('#clear').click()
 
         page.locator('#query').fill('6084707')
