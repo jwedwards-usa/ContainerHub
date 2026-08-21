@@ -38,10 +38,13 @@ def main():
         page.set_content(html,wait_until='load')
         page.wait_for_function(f"document.querySelector('#resultCount').textContent === '{expected_count}'")
         assert int(page.locator('#resultCount').inner_text())==expected_count
+        assert page.locator('.card').count()==min(60,expected_count)
+        if expected_count>60:
+            assert page.locator('#showMore').is_visible()
 
         page.locator('#query').fill('Safeway')
         assert int(page.locator('#resultCount').inner_text())>=1
-        assert page.locator('.fit-result',has_text='External dimensions unavailable').count()>=1
+        assert page.locator('.fit-result',has_text='Dimensions unavailable').count()>=1
         page.locator('#clear').click()
 
         page.locator('#query').fill('6084707')
@@ -63,6 +66,10 @@ def main():
         page.locator('#fitOnly').check()
         assert page.locator('#resultCount').inner_text()=='1'
         assert 'Fits 1 per shelf' in page.locator('.fit-result').inner_text()
+        page.wait_for_timeout(120)
+        assert page.locator('#shelfIdeas').is_visible()
+        assert page.locator('.plan-card').count()>=1
+        assert page.locator('.shelf-map .plan-piece').count()>=1
         page.locator('#unitToggle').click()
         assert page.locator('#widthUnit').inner_text()=='mm'
         assert page.locator('#shelfWidth').input_value()=='508'

@@ -19,12 +19,13 @@
   <main>
     <section class="search-panel" aria-label="Catalog search">
       <label class="search-field">
-        <span>Search</span>
-        <input id="query" type="search" placeholder="brand, SKU, material, lid…" autocomplete="off">
+        <span>Search the catalog</span>
+        <input id="query" type="search" placeholder="brand, SKU, material, lid, retailer…" autocomplete="off">
       </label>
 
       <fieldset class="fit-box">
-        <legend>Shelf fit</legend>
+        <legend>Fit a shelf or space</legend>
+        <p class="fit-help">Enter the clear inside dimensions. Results automatically rank by the closest container that actually fits.</p>
         <label><span>Width <small id="widthUnit">in</small></span><input id="shelfWidth" inputmode="decimal" type="number" min="0" step="0.01" placeholder="36"></label>
         <label><span>Depth <small id="depthUnit">in</small></span><input id="shelfDepth" inputmode="decimal" type="number" min="0" step="0.01" placeholder="24"></label>
         <label><span>Height <small id="heightUnit">in</small></span><input id="shelfHeight" inputmode="decimal" type="number" min="0" step="0.01" placeholder="18"></label>
@@ -41,21 +42,36 @@
       </div>
     </section>
 
+    <section id="shelfIdeas" class="shelf-ideas" hidden aria-labelledby="shelfIdeasTitle">
+      <div class="section-head">
+        <div>
+          <h2 id="shelfIdeasTitle">Shelf combinations</h2>
+          <p>Top-down, one-layer layouts using up to three container sizes. Height is checked; stacking is not assumed.</p>
+        </div>
+      </div>
+      <div id="shelfPlanList" class="plan-grid" aria-live="polite"></div>
+    </section>
+
     <section class="catalog-head">
-      <div><strong id="resultCount">0</strong> containers</div>
-      <div id="fitHint" class="muted">Enter shelf dimensions to rank by fit.</div>
+      <div class="result-summary"><strong id="resultCount">0</strong> containers <span id="fitHint" class="muted">Enter dimensions for geometric ranking.</span></div>
+      <label class="sort-control">Sort
+        <select id="sortMode">
+          <option value="best">Best match</option>
+          <option value="pack">Most per shelf</option>
+          <option value="space">Footprint use</option>
+          <option value="name">A–Z</option>
+        </select>
+      </label>
     </section>
 
     <section id="results" class="results" aria-live="polite"></section>
+    <div class="more-wrap"><button id="showMore" class="show-more" type="button" hidden>Show more</button></div>
   </main>
 
   <dialog id="previewDialog" aria-labelledby="previewTitle">
     <div class="preview-shell">
       <div class="dialog-head">
-        <div>
-          <div id="previewEyebrow" class="eyebrow"></div>
-          <strong id="previewTitle">Product preview</strong>
-        </div>
+        <div><div id="previewEyebrow" class="eyebrow"></div><strong id="previewTitle">Product preview</strong></div>
         <button id="closePreview" type="button" class="ghost" aria-label="Close product preview">Close</button>
       </div>
       <div class="preview-layout">
@@ -77,6 +93,7 @@
 
   <template id="cardTemplate">
     <article class="card">
+      <div class="rank" aria-hidden="true"></div>
       <div class="thumb-wrap"><img class="thumb" alt="" loading="lazy"></div>
       <div class="card-body">
         <div class="eyebrow"></div>
