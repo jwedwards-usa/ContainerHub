@@ -13,6 +13,7 @@ ContainerHub is a static GitHub Pages catalog. Keep it dependency-light, source-
 ## Catalog research
 - A product record needs a stable manufacturer/SKU identity, a source URL, and a purchase URL.
 - Product identity is the manufacturer/brand plus model or SKU. Do not duplicate one physical product just because several retailers sell it; put additional sellers in `data/offers.json`.
+- Exclude bowls, plates, cups, tumblers, and other tableware or drinkware. Capacity expressed in cups does not make a storage container out of scope.
 - A sellable SKU may be cataloged with `external_mm: null` or `internal_mm: null` when dimensions are genuinely unpublished. It remains searchable and purchasable but must be excluded only from the geometric mode that needs the missing measurement.
 - Record `verified_at` whenever a source is checked.
 - Dimensions must say whether they are external or internal. Preserve source semantics such as "interior at bottom" in `notes`.
