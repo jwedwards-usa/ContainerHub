@@ -1,9 +1,9 @@
 {
   "version": 1,
   "status": "active",
-  "cursor": "coordinated-1076-record-all-branch-reconciliation",
-  "record_count": 1076,
-  "shard_count": 67,
+  "cursor": "audited-3000-record-usplastic-tamco-trays",
+  "record_count": 3000,
+  "shard_count": 156,
   "offer_count": 12,
   "completed_sources": [],
   "completed_families": [
@@ -23,16 +23,25 @@
     "Uline bulk bins, totes, jars, bottles, jugs, tanks, drums, stack/nest containers, boxes and recovered unique families",
     "Really Useful Box recovered sizes through 64 litre",
     "Sterilite coordinated breadth/index waves",
-    "Target Brightroom wave 3"
+    "Target Brightroom wave 3",
+    "U.S. Plastic Thermo Scientific Nalgene waves 1-10",
+    "Grainger LewisBins and ORBIS wave 1",
+    "U.S. Plastic Tamco lightweight HDPE fabricated trays",
+    "U.S. Plastic Tamco polypropylene fabricated trays",
+    "U.S. Plastic Tamco polypropylene fabricated trays with spigots",
+    "U.S. Plastic Tamco dipping trays"
   ],
   "completed_batches": [
-    "all historical manufacturer and retailer waves",
+    "all historical manufacturer and retailer waves through the 2026-08-20 reconciliation",
     "Akro-Mils 82-model storage bulk wave",
     "Uline 109-model bins and totes wave",
     "Uline 72-model jars wave",
     "Sterilite coordinated index breadth wave",
     "Uline 85-model bottles wave",
-    "final all-branch unique-product reconciliation to 1076 records"
+    "all-branch unique-product reconciliation to 1076 records",
+    "post-baseline manifest audit to 2796 records",
+    "U.S. Plastic Tamco 204-product tray milestone wave",
+    "completed catalog audit to 3000 records across 156 shards"
   ],
   "active_sources": [
     "The Container Store",
@@ -47,7 +56,9 @@
     "Brookshire's",
     "Tom Thumb",
     "Safeway",
-    "IRIS USA"
+    "IRIS USA",
+    "U.S. Plastic Corp.",
+    "Grainger"
   ],
   "next_sources": [
     "complete retailer-by-retailer enumeration against research/retailer-coverage.json",
@@ -60,8 +71,10 @@
     "The Container Store remaining bin, tote, drawer, box, and crate families",
     "Ace remaining tote, bin, bucket, and crate families",
     "IRIS USA direct-manufacturer breadth",
+    "U.S. Plastic remaining plastic trays, tanks, drums, buckets, bottles, jars, carboys and industrial containers",
+    "Grainger remaining distinct plastic storage-bin, tote, attached-lid and bulk-container models",
     "Quantum non-QUS, Buckhorn modular/bulk and remaining Cambro food-storage families",
     "enrich sparse Uline and Sterilite index records with model-specific geometry and materials"
   ],
-  "updated_at": "2026-08-20"
+  "updated_at": "2026-08-26"
 }
