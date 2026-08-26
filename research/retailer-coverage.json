@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "scope": "Sellable plastic containers available through the requested US retailers and IRIS USA. Excludes bags, wrap, disposable film, and non-container accessories.",
+  "scope": "Sellable plastic containers available through the requested US retailers, IRIS USA, and additional established US retailers. Excludes bags, wrap, disposable film, and non-container accessories.",
   "status": "active",
-  "updated_at": "2026-08-20",
+  "updated_at": "2026-08-26",
   "definition_of_done": [
     "Enumerate every in-scope sellable SKU or variant exposed by the retailer.",
     "Normalize a shared manufacturer identity once and attach additional sellers in data/offers.json.",
@@ -25,6 +25,8 @@
     {"source":"Safeway","enumeration_complete":false,"coverage":["Signature Select 16 fl oz spray bottle represented as an additional Safeway offer via Instacart"],"next":"food-storage, utility, bottle, and household container categories"},
     {"source":"Costco","enumeration_complete":false,"coverage":["10 currently listed plastic-storage products including Greenmade, IRIS, Cambro, Snapware, and Tupperware","external geometry captured where Costco published single-container dimensions"],"next":"enumerate additional Costco storage, food-storage, business-delivery, seasonal, and warehouse-only plastic container SKUs and reconcile shared manufacturer identities into offers"},
     {"source":"Kroger","enumeration_complete":false,"coverage":["28 reviewed in-scope products across reusable food-storage containers, household bins, latching boxes, totes, and heavy-duty storage","relevance gate includes durable or reusable plastic containers; excludes bags, flexible film, foil, disposable packaging, non-container accessories, and unrelated household goods","stable Kroger product or UPC URLs captured; geometry is used only when the listing identifies actual container dimensions"],"next":"continue Kroger pagination and category/brand filters using the relevance gate, then reconcile shared manufacturer identities into offers instead of duplicating physical products"},
-    {"source":"IRIS USA","enumeration_complete":false,"coverage":["WeatherPro 6.5, 19, 30, 44, 46, 74, 103, and 156 qt families plus file box","pack and color variants represented as offers where identity is shared"],"next":"remaining WeatherPro variants and other current sellable IRIS plastic container families"}
+    {"source":"IRIS USA","enumeration_complete":false,"coverage":["WeatherPro 6.5, 19, 30, 44, 46, 74, 103, and 156 qt families plus file box","pack and color variants represented as offers where identity is shared","six manufacturer-direct storage waves including totes, file boxes, drawers, craft cases, pet-food containers and open bins"],"next":"remaining WeatherPro variants and other current sellable IRIS plastic container families"},
+    {"source":"Grainger","enumeration_complete":false,"coverage":["20 source-backed physical products from current LEWISBINS and ORBIS listings","color-only sellable variants collapsed under shared manufacturer model identities","discontinued LEWISBINS pages and fiberglass totes excluded"],"next":"continue Grainger shelf bins, stacking/nesting totes, attached-lid totes, bulk containers, and additional low-overlap brands; reconcile Akro-Mils and Quantum listings against existing manufacturer identities"},
+    {"source":"U.S. Plastic Corp.","enumeration_complete":false,"coverage":["Thermo Scientific Nalgene waves 1-10","63 Tamco lightweight HDPE fabricated trays","65 current Tamco polypropylene fabricated trays; items 14685 and 15442 excluded as out of stock","67 sellable Tamco polypropylene fabricated trays with 3/4 in NPT spigots","9 Tamco polypropylene dipping trays"],"next":"continue distinct plastic tanks, drums, buckets, bottles, jars, carboys, trays and industrial containers; collapse pack/color-only variants and preserve inside/outside dimension semantics"}
   ]
 }

@@ -1,44 +1,64 @@
 # ContainerHub
 
-A static, source-backed catalog for comparing plastic containers by real dimensions and shelf fit. No backend and no build step are required.
+ContainerHub is a static catalog for finding plastic containers by real dimensions, usable interior space, and shelf fit. Product data is source-backed, searchable in the browser, and published without a backend.
 
 **Live site:** https://jwedwards-usa.github.io/ContainerHub/
 
-## What works
-- Search across brand, model/SKU, material, closure, category, color, notes, source retailer, and additional seller offers, ranked by weighted text relevance.
-- Filter by brand, lid, transparency, wheels, and common paper/file formats.
-- Switch dimensional search between **outside dimensions** (fit a shelf/cubby) and **inside dimensions** (find the smallest published usable interior that can hold a required width/depth/height).
-- Enter shelf width, depth and height to rank fitting containers by dimensional closeness; near misses stay below true fits unless fit-only is enabled.
-- Flag containers whose published internal geometry fits US Letter, US Legal, A4, or a standard letter hanging-file envelope. Hanging-file flags are dimensional only and do not claim built-in rails.
-- Switch sorting to most per shelf, one-layer footprint use, or A–Z when a different geometric objective matters.
-- See mixed one-layer shelf plans that combine up to three container sizes using physically valid top-down row layouts.
-- Keep sellable products with unpublished external or internal dimensions searchable and purchasable while excluding them only from the geometric mode that needs the missing measurement.
-- Rotate containers on their base by default; tipping onto a side is opt-in. In inside mode the same option permits the required item envelope to rotate onto its side.
-- Count vertical packing layers only when the catalog explicitly marks a product stackable.
-- Toggle imperial and metric display while canonical catalog data stays metric.
-- Compare external dimensions, internal dimensions, capacity and empty weight when published.
-- Open source specifications, product previews, primary purchase pages, and additional retailer offers.
-- Render large result sets progressively instead of creating every product card at once.
+## Features
 
-The 2026-08-20 reconciliation contains **1,076 unique product records across 67 shards**, plus **12 additional retailer/pack/configuration offers**. It reconciles every worker branch surfaced in that pass, preserving richer source-backed records when branches overlap and retaining sparse index records only for genuinely unique sellable models. Run `npm run validate` for the current count after later mining work.
+- Search by brand, model or SKU, material, category, color, closure, retailer, and product notes.
+- Find containers that fit a shelf or cubby using published external dimensions.
+- Find the smallest suitable container for an item using published internal dimensions.
+- Rank valid fits ahead of near misses, with optional base rotation and side tipping.
+- Compare shelf utilization, container counts, and mixed one-layer packing plans.
+- Switch between imperial and metric units.
+- Filter for published interior dimensions that accommodate US Letter, US Legal, A4, or a letter hanging-file envelope.
+- Follow specification sources, purchase links, and additional retailer offers.
 
-Retailer enumeration is tracked in `research/retailer-coverage.json`; no retailer is marked exhaustive until every in-scope sellable SKU or variant has an explicit outcome.
+## Data
 
-## Run locally
+`data/catalog.json` is the catalog manifest. Product records are stored in JSON shards and validated against `data/schema.json`. Additional sellers, packs, and configurations for an existing physical product belong in `data/offers.json` rather than duplicate product records.
+
+Canonical measurements use millimeters, milliliters, and grams. Unknown values remain `null`; the catalog does not estimate unpublished dimensions or specifications.
+
+Retailer coverage is tracked in `research/retailer-coverage.json`. A retailer is considered complete only when every in-scope sellable SKU or variant has an explicit outcome.
+
+Generated SVG thumbnails are dimensional schematics, not product photography.
+
+## Development
+
+No production build step or runtime backend is required.
+
+Start a local server:
+
 ```sh
-python3 -m http.server 4173
+npm run serve
 ```
-Open `http://localhost:4173`.
 
-## Verify
+Then open `http://localhost:4173`.
+
+Run validation and unit tests:
+
 ```sh
 npm run check
+```
+
+Run the browser smoke test:
+
+```sh
 python3 tests/browser_test.py
 ```
 
-`npm run check` validates catalog invariants and retailer offers, then runs the fit/search unit tests. The Playwright smoke test uses an in-memory bundle so it also runs in network-restricted environments.
+## Repository structure
 
-## Data
-`data/catalog.json` is the manifest; each listed JSON file is a product shard using `data/schema.json`. Additional sellers, packs, or configurations for an existing physical product live in `data/offers.json` rather than duplicate product records. Measurements are canonicalized to millimeters, milliliters and grams. Unknown values are `null`, never estimates. See `AGENTS.md` for research rules.
+- `app.js`, `src/` — search, fit, packing, and UI logic
+- `data/` — catalog manifest, schema, product shards, and retailer offers
+- `research/` — coverage tracking and mining checkpoints
+- `tests/` — unit and browser tests
+- `assets/` — static site assets and generated thumbnails
 
-Generated SVG thumbnails are dimensional schematics rather than product photography and keep the catalog usable on low-bandwidth connections.
+## Deployment
+
+The site is published to GitHub Pages from the `gh-pages` branch. The deployable site is plain static content; GitHub Actions are not required.
+
+See `AGENTS.md` for catalog research, validation, and implementation rules. See `HANDOFF.md` for current architecture and project status.
