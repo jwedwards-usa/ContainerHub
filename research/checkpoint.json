@@ -1,9 +1,9 @@
 {
   "version": 1,
   "status": "active",
-  "cursor": "audited-3000-record-usplastic-tamco-trays",
-  "record_count": 3000,
-  "shard_count": 156,
+  "cursor": "3073-record-usplastic-tamco-high-temp-tanks",
+  "record_count": 3073,
+  "shard_count": 158,
   "offer_count": 12,
   "completed_sources": [],
   "completed_families": [
@@ -29,7 +29,9 @@
     "U.S. Plastic Tamco lightweight HDPE fabricated trays",
     "U.S. Plastic Tamco polypropylene fabricated trays",
     "U.S. Plastic Tamco polypropylene fabricated trays with spigots",
-    "U.S. Plastic Tamco dipping trays"
+    "U.S. Plastic Tamco dipping trays",
+    "U.S. Plastic Tamco polypropylene high-temperature rectangular tanks",
+    "U.S. Plastic Tamco polypropylene high-temperature cylindrical tanks"
   ],
   "completed_batches": [
     "all historical manufacturer and retailer waves through the 2026-08-20 reconciliation",
@@ -41,7 +43,8 @@
     "all-branch unique-product reconciliation to 1076 records",
     "post-baseline manifest audit to 2796 records",
     "U.S. Plastic Tamco 204-product tray milestone wave",
-    "completed catalog audit to 3000 records across 156 shards"
+    "completed catalog audit to 3000 records across 156 shards",
+    "U.S. Plastic Tamco 73-product high-temperature tank wave to 3073 records"
   ],
   "active_sources": [
     "The Container Store",
@@ -71,10 +74,10 @@
     "The Container Store remaining bin, tote, drawer, box, and crate families",
     "Ace remaining tote, bin, bucket, and crate families",
     "IRIS USA direct-manufacturer breadth",
-    "U.S. Plastic remaining plastic trays, tanks, drums, buckets, bottles, jars, carboys and industrial containers",
+    "U.S. Plastic remaining plastic tanks, drums, buckets, bottles, jars, carboys and industrial containers",
     "Grainger remaining distinct plastic storage-bin, tote, attached-lid and bulk-container models",
     "Quantum non-QUS, Buckhorn modular/bulk and remaining Cambro food-storage families",
     "enrich sparse Uline and Sterilite index records with model-specific geometry and materials"
   ],
-  "updated_at": "2026-08-26"
+  "updated_at": "2026-08-27"
 }
