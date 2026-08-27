@@ -1,12 +1,12 @@
 # ContainerHub handoff
 
-Last updated: 2026-08-26
+Last updated: 2026-08-27
 
 ## Current state
 
-ContainerHub is a static GitHub Pages catalog with no backend and no required build step. The completed 2026-08-26 catalog audit establishes **3,000 unique registered product records across 156 product shards**, plus **12 retailer/pack/configuration offers** in `data/offers.json`.
+ContainerHub is a static GitHub Pages catalog with no backend and no required build step. The current checkpoint is **3,073 unique registered product records across 158 product shards**, plus **12 retailer/pack/configuration offers** in `data/offers.json`.
 
-`data/catalog.json` is the authoritative shard manifest. `research/checkpoint.json` is the operational checkpoint. `research/catalog-audit-2026-08-26.md` records the count reconciliation and 3,000-record milestone. Do not use the historical 1,076-record reconciliation as the current count; it remains useful only as an audit baseline.
+`data/catalog.json` is the authoritative shard manifest. `research/checkpoint.json` is the operational checkpoint. `research/catalog-audit-2026-08-26.md` records the count reconciliation and 3,000-record milestone. The post-audit U.S. Plastic / Tamco high-temperature tank wave adds 73 products on top of that milestone. Do not use the historical 1,076-record reconciliation as the current count; it remains useful only as an audit baseline.
 
 The current execution VM cannot reliably resolve GitHub, so repository reads/writes, branch verification and publication use the connected GitHub API. There are no GitHub Actions credits available.
 
@@ -42,9 +42,9 @@ Only the first 60 result cards render initially; `Show more` adds cards in 60-it
 
 Outside shelf searches generate up to three one-layer combination plans. The planner allows base rotation, mixes up to three product identities, and uses bounded beam search to balance coverage, depth use, height harmony and SKU simplicity.
 
-## 3,000-record milestone
+## 3,000-record milestone and continuation
 
-The pre-milestone 2026-08-26 audit reconciled current `main` to **2,796 records across 152 shards**. The U.S. Plastic / Tamco tray wave adds exactly 204 unique retailer item identities:
+The pre-milestone 2026-08-26 audit reconciled current `main` to **2,796 records across 152 shards**. The U.S. Plastic / Tamco tray wave added exactly 204 unique retailer item identities:
 
 - lightweight HDPE fabricated trays: 63
 - polypropylene fabricated trays: 65
@@ -54,6 +54,8 @@ The pre-milestone 2026-08-26 audit reconciled current `main` to **2,796 records 
 The plain polypropylene family excludes U.S. Plastic items 14685 and 15442 because the retailer marks them out of stock. Made-to-order spigot configurations remain included as current sellable products. Pack and color variants are not multiplied into separate product identities.
 
 U.S. Plastic explicitly publishes inside dimensions for the fabricated HDPE/polypropylene families, so those values belong in `internal_mm` and `external_mm` remains null. The dipping-tray listing publishes approximate outside dimensions, so those values belong in `external_mm`.
+
+The 2026-08-27 continuation adds **65 current polypropylene high-temperature rectangular tanks** and **8 current polypropylene high-temperature cylindrical tanks**. Cover accessories and tank rows explicitly marked out of stock are excluded. Published nominal tank geometry is stored in `external_mm`; no interior geometry is inferred.
 
 ## Data and sourcing rules
 
@@ -86,13 +88,13 @@ For data-only waves, independently verify JSON parseability, unique IDs/models, 
 
 The 2026-08-20 all-branch reconciliation produced the historical 1,076-record baseline. Historical branches such as `catalog/bulk-wave-1-572-20260820`, `catalog/scale-1000-20260820`, and `catalog/1000-product-expansion-20260820` contain many superseded or duplicate sparse identities. Do not reintroduce those files merely because their branch names imply additional scale.
 
-`research/branch-reconciliation-2026-08-20.md` documents that historical union. `research/catalog-audit-2026-08-26.md` supersedes it for current counts.
+`research/branch-reconciliation-2026-08-20.md` documents that historical union. `research/catalog-audit-2026-08-26.md` supersedes it for the 3,000-record audit baseline; `research/checkpoint.json` carries the current post-audit count.
 
 ## Next useful work
 
 1. Continue retailer-by-retailer enumeration from `research/retailer-coverage.json`; 3,000 is a milestone, not exhaustive coverage.
 2. Prioritize Walmart, Target, Home Depot and Lowe's because their inventories are broad and change frequently.
-3. Continue U.S. Plastic beyond the completed Tamco tray families into distinct tanks, drums, buckets, bottles, jars, carboys and industrial containers.
+3. Continue U.S. Plastic beyond the completed Tamco tray and high-temperature tank families into distinct drums, buckets, bottles, jars, carboys and additional tanks.
 4. Continue Grainger shelf bins, stack/nest totes, attached-lid totes and bulk containers while reconciling Akro-Mils/Quantum against existing manufacturer identities.
 5. Continue H-E-B, Tom Thumb, Safeway, Brookshire's, Hobby Lobby, Michaels, The Container Store and Ace.
 6. Expand IRIS USA, Quantum non-QUS, Buckhorn modular/bulk and remaining Cambro families.
